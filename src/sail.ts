@@ -2,7 +2,7 @@ import { Page } from 'puppeteer';
 import { Session } from './session';
 import { Timer } from './timer';
 import { echo, clickButton, getInput, sleep } from './helper';
-import { loginSelector, msgSelector } from './selectors';
+import { loginSelector, msgSelector } from './declare/selectors';
 
 /**
  * sail the splash page and click the login button
