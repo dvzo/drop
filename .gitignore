@@ -1,6 +1,9 @@
 # ignore all files
 *.esproj
 
+# ignore specific files
+src/constants.ts
+
 # ignore all files in directories
 /dist
 /obj
