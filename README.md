@@ -1,4 +1,8 @@
 # auto drop :)
 
-## install with:
-`npm install`
+## installation
+```
+npm install
+```
+
+add contstant and selector files
