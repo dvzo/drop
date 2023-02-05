@@ -5,4 +5,4 @@
 npm install
 ```
 
-- add declaration folder
+- add `declare` folder in `src` folder
