@@ -18,7 +18,7 @@ export async function splash(page: Page, timer: Timer): Promise<void> {
  * sail the login page, type the user and pw, and click the login button
  * */
 export async function login(page: Page, timer: Timer, user: User): Promise<void> {
-    await page.waitForSelector(loginSelector.userNameInput, { timeout: timer._leader })
+    await page.waitForSelector(loginSelector.userNameInput, { timeout: 0 })
         .then(() => getInput(`${user.name} email`, false),
             () => { throw new Error("unable to sail the login page :("); })
         .then((email) => {
