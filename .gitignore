@@ -3,6 +3,7 @@
 
 # ignore specific files
 src/constants.ts
+src/selectors.ts
 
 # ignore all files in directories
 /dist
