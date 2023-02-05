@@ -1,5 +1,6 @@
 # ignore all files
 *.esproj
+*.txt
 
 # ignore all files in directories
 /dist

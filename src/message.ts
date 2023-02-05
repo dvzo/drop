@@ -1,5 +1,5 @@
 import { Session } from './session';
-import { BASE_URL, API_VERSION, } from './constants';
+import { BASE_URL, API_VERSION, } from './declare/constants';
 
 /**
  * returns an object literal message body property as a string for the sending a message

@@ -8,7 +8,7 @@ import { OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVA
 import { injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
-import { msgSelector } from './selectors';
+import { msgSelector } from './declare/selectors';
 
 
 /**
@@ -58,78 +58,16 @@ import { msgSelector } from './selectors';
     await page.goto(session._baseUrl);
 
     await splash(page, timer);
-    //echo("splashed! logging in...");
 
-    // login with credentials
-    //await nav.login(page).then(() => help.log(`login success! navigating to ${channelName}...`));
-
-    // original
-    //await nav.login(page, timer, session._user);
-    //echo(`logging in ${session._user.name}...`);
-
-    // testing
     await login(page, timer, session._user);
-
-    // testing
 
     await tfa(page, session, timer);
 
     await dashboard(page, session, timer);
 
-    // original
-    //await nav.tfa(page, timer);
-    //echo("2FA success! logging in...");
-
-    //await nav.success(page, timer);
-    //echo("login success!");
-
-
-    //echo(`login success! navigating to ${session._guild.name}/${session._channel.name}...`);
-
-    // navigate to channel
-    //await page.goto(`${session.NAV_URL}/${session.CHANNEL_ID}`, { timeout: cs.TIMEOUT.main })
-    //    .then(() => {
-    //        let seconds: number = cs.TIMEOUT.total / 1000;
-    //        help.log(`max time to wait for page to load: ${seconds} seconds `)
-    //    })
-    //    .catch(() => { throw new Error(help.errorLog("unable to continue")); });
-
-    // testing
-    //await page.goto(`${session.NAV_URL}/${session.CHANNEL_ID}`, { timeout: cs.TIMEOUT.main })
-    //await page.goto(session._referUrl, { timeout: timer._leader })
-    //    .then(
-    //        (success) => {
-    //            let seconds: number = timer._total / 1000;
-    //            echo(`max time to wait for page to load: ${seconds} seconds `)
-    //        },
-    //        (fail) => {
-    //            throw new Error("could not find url");
-
-    //        }
-    //    )
-    //    .catch(() => { throw new Error(help.errorLog("unable to continue")); });
-
-    // await grandLine(page, timer);
-
-    // working!
-    // pi: trying con.TIMEOUT.total here
-    //await page.waitForSelector(select.msg.slate, { timeout: 5000 });
-
-    // testing
-    // grand line is when you reached the final destination and see the slate container
-    // await grandLine(page, timer)
-    //await page.waitForSelector(msgSelector.slate, { timeout: timer._leader });
-
     await grandLine(page, timer);
 
     // inject mutator
-    //echo("injecting mutator");
-
-    // testing
-    //await page.evaluate(injectMutator, session._guild.id, APP_ID, msgSelector.messages, session._id,
-    //    session._channel.id, session._requestUrl, session._header, session._referUrl)
-    //    .then(() => echo("stealing treasure!"));
-
     await page.evaluate(injectMutator, APP_ID, session, msgSelector.messages)
         .then(() => echo("stealing treasure!"));
 
