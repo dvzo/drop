@@ -1,0 +1,8 @@
+# ignore all files
+*.esproj
+
+# ignore all files in directories
+/dist
+/obj
+/.vscode
+/node_modules

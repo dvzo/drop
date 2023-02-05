@@ -1,3 +1,4 @@
-# TODO
-- [ ] app/login() -> remove timeouts
-- [ ] body -> messageId?
+# auto drop :)
+
+## install with:
+`npm install`
