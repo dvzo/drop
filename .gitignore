@@ -1,12 +1,9 @@
 # ignore all files
 *.esproj
 
-# ignore specific files
-src/constants.ts
-src/selectors.ts
-
 # ignore all files in directories
 /dist
 /obj
 /.vscode
 /node_modules
+/src/declare
