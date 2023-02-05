@@ -1,4 +1,4 @@
-import { SESSION_ID, APP_ID, BASE_URL } from './constants';
+import { SESSION_ID, APP_ID, BASE_URL } from './declare/constants';
 
 export class Session {
     _id = SESSION_ID;
