@@ -61,7 +61,6 @@ export async function tfa(page: Page, session: Session, timer: Timer): Promise<v
  * sail the dashboard page (whirlpool), and go to the selected channel (the final stretch)
  * */
 export async function dashboard(page: Page, session: Session, timer: Timer): Promise<void> {
-    //await page.waitForSelector(loginSelector.homeLogo, { timeout: timer._leader })
     await page.waitForSelector(loginSelector.homeLogo, { timeout: 0 })
         .then(() => echo("sailed pass the whirlpool!"),
             () => { throw new Error("unable to sail pass the whirlpool :("); });

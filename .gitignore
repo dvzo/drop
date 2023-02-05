@@ -4,7 +4,6 @@
 # ignore specific files
 src/constants.ts
 src/selectors.ts
-src/observer.ts
 
 # ignore all files in directories
 /dist
