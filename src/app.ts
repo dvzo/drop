@@ -4,7 +4,7 @@ import * as puppeteer from 'puppeteer';
 import { loadScreen, optionSelect, channelSelect, getLaunchOptions, echo } from './helper';
 import { Session } from './session';
 import { Timer } from './timer';
-import { OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, TIMEOUT_MULT } from './constants';
+import { OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, TIMEOUT_MULT } from './declare/constants';
 import { injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
@@ -25,6 +25,8 @@ import { msgSelector } from './declare/selectors';
     timer.leader = LEADER_TIMEOUT;
     timer.follower = FOLLOWER_TIMEOUT;
     timer.delay = DELAY;
+    timer._m_pickInterval = PICK_INTERVAL;
+    timer._m_pickCd = PICK_CD;
 
     // select os, user, guild, and channel
     let os = await optionSelect(OS_LIST, "os");
@@ -68,7 +70,7 @@ import { msgSelector } from './declare/selectors';
     await grandLine(page, timer);
 
     // inject mutator
-    await page.evaluate(injectMutator, APP_ID, session, msgSelector.messages)
+    await page.evaluate(injectMutator, APP_ID, session, timer, msgSelector.messages)
         .then(() => echo("stealing treasure!"));
 
     // sending initial message

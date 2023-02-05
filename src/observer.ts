@@ -1,14 +1,11 @@
 import { Session } from './session';
+import { Timer } from './timer';
+
 /** 
  * mutation observer
  * need nested functions since injectMutator does not have a scope
  * */
-export var injectMutator = function (appId: string, session: Session, msgSelector: string) {
-
-    // cooldownTimer should be > autoTimer; ensures no double picking
-    const autoTimer = 10000; // how long to wait before auto-picking
-    const cooldownTimer = 30000; // active cooldown after a card was picked
-
+export var injectMutator = function (appId: string, session: Session, timer: Timer, msgSelector: string) {
     class Cooldown {
         private _onCooldown: boolean = false;
 
@@ -167,7 +164,7 @@ export var injectMutator = function (appId: string, session: Session, msgSelecto
                                     "credentials": "include"
                                 });
                             }
-                        }, autoTimer);
+                        }, timer._m_pickInterval);
                     }
 
                 } else if (!dataCustomId && !authorName && msgContent) {
@@ -175,7 +172,7 @@ export var injectMutator = function (appId: string, session: Session, msgSelecto
                     if (msgContent.includes(`@${session._user.name} took`)) {
                         console.log(msgContent);
 
-                        cd.startCooldown(cooldownTimer);
+                        cd.startCooldown(timer._m_pickCd);
                     }
                 }
             }
