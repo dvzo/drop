@@ -169,7 +169,8 @@ export var injectMutator = function (appId: string, session: Session, timer: Tim
 
                 } else if (!dataCustomId && !authorName && msgContent) {
 
-                    if (msgContent.includes(`@${session._user.name} took`)) {
+                    if (msgContent.includes(`@${session._user.name} took`)
+                        || msgContent.includes(`@${session._user.name} picked`)) {
                         console.log(msgContent);
 
                         cd.startCooldown(timer._m_pickCd);
