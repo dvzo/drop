@@ -230,11 +230,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let authorElement = document.querySelector(`${contentSelector} > h3 > span > span`);
                 let msgContentElement = document.querySelector(`${contentSelector} > div`); // should always be available
 
-                // TODO: adding message accessories
-
-                // should always be visible
-                //let msgAccessoriesElement = document.querySelector(`${contentSelector} > div > div[id*='message-accessories']`);
-
                 // embedded grid which will contain the title and text we want
                 // article route is specific for sdn / card drop text only
                 // message-accessories should always be available
@@ -247,11 +242,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let gridCards;
                 let cardDescription;
                 let card;
-
-                // if message 
-                if (embedGridElement) {
-
-                }
 
                 // i.e. "SOFI"
                 if (authorElement) {
@@ -272,9 +262,45 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                 if (dataCustomId && authorName && msgContent) {
 
+                    // if any drop command is executed
                     if (authorName === "SOFI" && msgContent.includes(`@${session._user.name} is dropping`)) {
 
                         // check for embedded / sdn text only grid
+                        // check if dropped response contains the block grid
+                        if (embedGridElement) {
+
+                            // TODO:
+                            // process will need to be sequential and linear ; not using switch statements
+                            // this way, actions can happen in succession of each other
+                            // i.e. for each drop, do scl on each card...
+
+                            embedGridTitle = getEmbedGridTitle(embedGridSelector);
+                            embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
+
+                            // drop grid
+                            if (embedGridTitle.includes("DROP")) {
+
+                                if (embedGridFieldsElement) {
+                                    gridCards = embedGridFieldsElement.children; // 3 given cards
+
+                                    for (let i = 0; i < gridCards.length; i++) {
+                                        cardDescription = (gridCards[i] as HTMLElement).innerText;
+                                        card = createCard(cardDescription); // populate card with descriptions
+
+                                        // get card WL here?
+
+                                        // store object in global array
+                                        // select cards later based off of wl or events
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                        // TODO: below needs to be an else statement so they both dont get ran
 
 
                         let body = getBody(msgAccessoriesId, dataCustomId);
@@ -312,50 +338,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                         cd.startCooldown(timer._m_pickCd);
                     }
-
-                // for embedded messages
-                } else if (dataCustomId && authorName && !msgContent) {
-
-                    // TODO:
-                    // process will need to be sequential and linear ; not using switch statements
-                    // this way, actions can happen in succession of each other
-                    // i.e. for each drop, do scl on each card...
-
-
-                    // should always be available
-                    if (msgAccessoriesElement) {
-
-                        // check if message accessories has children
-                        // yes = embed message, no = plain text
-                        if (msgAccessoriesElement.childElementCount > 0) {
-                            embedGridTitle = getEmbedGridTitle(embedGridSelector);
-                            embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
-
-                            if (embedGridTitle.includes("DROP")) {
-
-                                // loop through grid fields element with either childNodes or children property
-                                if (embedGridFieldsElement) {
-                                    gridCards = embedGridFieldsElement.children;
-
-                                    for (let i = 0; i < gridCards.length; i++) {
-                                        cardDescription = (gridCards[i] as HTMLElement).innerText;
-                                        card = createCard(cardDescription); // populate card with descriptions
-
-                                    }
-
-
-                                    // drop action
-                                        // create an object for each card
-                                        // store object in global array
-                                        // select cards later based off of wl or events
-
-                                }
-
-                            }
-                        }
-
-                    }
-
 
                 }
             }
