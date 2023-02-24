@@ -70,7 +70,7 @@ import { msgSelector } from './declare/selectors';
     await grandLine(page, timer);
 
     // inject mutator
-    await page.evaluate(injectMutator, APP_ID, session, timer, msgSelector.messages)
+    await page.evaluate(injectMutator, DEBUG, APP_ID, session, timer, msgSelector.messages)
         .then(() => echo("stealing treasure!"));
 
     // sending initial message

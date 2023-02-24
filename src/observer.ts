@@ -5,7 +5,7 @@ import { Timer } from './timer';
  * mutation observer
  * need nested functions since injectMutator does not have a scope
  * */
-export var injectMutator = function (appId: string, session: Session, timer: Timer, msgSelector: string) {
+export var injectMutator = function (debug: boolean, appId: string, session: Session, timer: Timer, msgSelector: string) {
     class Cooldown {
         private _onCooldown: boolean = false;
 
