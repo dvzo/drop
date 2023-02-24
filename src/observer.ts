@@ -86,6 +86,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         return JSON.stringify(body);
     }
 
+    /**
+     * get the title of the embed grid element, given its grid selector
+     * */
+    function getEmbedGridTitle(embedGridSelector: string) {
+        let gridTitle: string = "";
+        let gridTitleElement = document.querySelector(`${embedGridSelector} > div[class*='embedTitle']`);
+
+        if (gridTitleElement) {
+            gridTitle = gridTitleElement.innerHTML;
+        }
+
+        return gridTitle;
+    }
+
     // selector for all messages
     var msgSelector = "ol[class*='scroll']";
 
@@ -127,15 +141,23 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let authorElement = document.querySelector(`${contentSelector} > h3 > span > span`);
                 let msgContentElement = document.querySelector(`${contentSelector} > div`); // should always be available
 
-                // TODO: need to add the message accessories here
+                // TODO: adding message accessories
+                // should always be visible
                 let msgAccessoriesElement = document.querySelector(`${contentSelector} > div > div[id*='message-accessories']`);
+                let embedGridSelector: string; // embedded grid which will contain the title and text we want
+                let embedGridTitle: string;
 
                 // should always be available
                 if (msgAccessoriesElement) {
 
-                    // TODO: check if msg accessories have children?
-                    // yes = embed
-                    // no = plain message
+                    // check if message accessories has children
+                    // yes = embed message, no = plain text
+                    if (msgAccessoriesElement.childElementCount > 0) {
+                        embedGridSelector = `${contentSelector} > div > div[id*='message-accesories'] > article > div > div`;
+                        embedGridTitle = getEmbedGridTitle(embedGridSelector);
+
+
+                    }
 
                 }
 
