@@ -200,6 +200,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     // create cooldown object to be used to determine whether to send a request or not
     var cd = new Cooldown();
 
+    // create list of current cards
+    var cards: Card[];
+
     // Callback function to execute when mutations are observed
     const callback = (mutationList: any, observer: any) => {
 
@@ -280,21 +283,37 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                             // drop grid
                             if (embedGridTitle.includes("DROP")) {
 
+                                // testing
+                                console.log("drop detected");
+
                                 if (embedGridFieldsElement) {
                                     gridCards = embedGridFieldsElement.children; // 3 given cards
 
+                                    // store cards in the global card array
                                     for (let i = 0; i < gridCards.length; i++) {
                                         cardDescription = (gridCards[i] as HTMLElement).innerText;
                                         card = createCard(cardDescription); // populate card with descriptions
-
-                                        // get card WL here?
-
-                                        // store object in global array
-                                        // select cards later based off of wl or events
-
+                                        cards.push(card);
                                     }
+                                }
+
+                            // check for single character lookup
+                            } else if (embedGridTitle.toLowerCase().trim() === "lookup") {
+
+                                // testing
+                                console.log("single lookup detected");
+
+                                // for each card -> get the WL and store it
+                                for (let i = 0; i < cards.length; i++) {
+
+                                    // send "scl name"
+
+                                    // if 
 
                                 }
+
+                                // TODO: need to clear this array with length = 0 at the end
+                                // select cards later based off of wl or events
 
                             }
 
