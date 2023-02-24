@@ -127,6 +127,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let authorElement = document.querySelector(`${contentSelector} > h3 > span > span`);
                 let msgContentElement = document.querySelector(`${contentSelector} > div`); // should always be available
 
+                // TODO: need to add the message accessories here
+
                 // i.e. "SOFI"
                 if (authorElement) {
                     authorName = authorElement.textContent;
@@ -135,6 +137,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 // i.e. "@zootrash is dropping the cards"
                 // also "@zootrash took the card Seunghyub | mmjhz6 |  Ice"
                 // when cards are gone: "@zootrash dropped the cards."
+                // this is pure text entered from users
                 if (msgContentElement) {
                     msgContent = msgContentElement.textContent;
                 }
@@ -147,6 +150,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                     if (authorName === "SOFI" && msgContent.includes(`@${session._user.name} is dropping`)) {
                         let body = getBody(msgAccessoriesId, dataCustomId);
+
+                        // TEST: print out body
+                        console.log("body: " + body);
 
                         if (!debug) {
                             setTimeout(() => {
