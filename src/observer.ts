@@ -6,6 +6,10 @@ import { Timer } from './timer';
  * need nested functions since injectMutator does not have a scope
  * */
 export var injectMutator = function (debug: boolean, appId: string, session: Session, timer: Timer, msgSelector: string) {
+
+    /**
+     * cooldown class to control cooldowns between each request
+     * */
     class Cooldown {
         private _onCooldown: boolean = false;
 
@@ -29,6 +33,58 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             }, ms);
         }
+    }
+
+    /**
+     * card class used to hold values of cards to request
+     * */
+    class Card {
+        private _id!: number;
+        private _gen!: number;
+        private _wl!: number;
+        private _name!: string;
+        private _series!: string;
+
+        public get id(): number {
+            return this._id;
+        }
+
+        public set id(id: number) {
+            this._id = id;
+        }
+
+        public get gen(): number {
+            return this._gen;
+        }
+
+        public set gen(gen: number) {
+            this._gen = gen;
+        }
+
+        public get wl(): number {
+            return this._wl;
+        }
+
+        public set wl(wl: number) {
+            this._wl = wl;
+        }
+
+        public get name(): string {
+            return this._name;
+        }
+
+        public set name(name: string) {
+            this._name = name;
+        }
+
+        public get series(): string {
+            return this._series;
+        }
+
+        public set series(series: string) {
+            this._series = series;
+        }
+
     }
 
     /**
@@ -89,15 +145,24 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * get the title of the embed grid element, given its grid selector
      * */
-    function getEmbedGridTitle(embedGridSelector: string) {
+    function getEmbedGridTitle(embedGridSelector: string): string {
         let gridTitle: string = "";
-        let gridTitleElement = document.querySelector(`${embedGridSelector} > div[class*='embedTitle']`);
+        let gridTitleElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedTitle']`);
 
         if (gridTitleElement) {
-            gridTitle = gridTitleElement.innerHTML;
+            gridTitle = gridTitleElement.innerText;
         }
 
         return gridTitle;
+    }
+
+    /**
+     * returns the grid field element for the main content
+     * */
+    function getEmbedGridFieldsElement(embedGridSelector: string): HTMLElement | null {
+        let gridFieldsElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedFields']`);
+
+        return gridFieldsElement;
     }
 
     // selector for all messages
@@ -144,8 +209,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 // TODO: adding message accessories
                 // should always be visible
                 let msgAccessoriesElement = document.querySelector(`${contentSelector} > div > div[id*='message-accessories']`);
-                let embedGridSelector: string; // embedded grid which will contain the title and text we want
-                let embedGridTitle: string;
+                // embedded grid which will contain the title and text we want
+                let embedGridSelector = `${contentSelector} > div > div[id*='message-accesories'] > article > div > div`;
+                let embedGridTitle;
+                let embedGridFieldsElement;
 
                 // should always be available
                 if (msgAccessoriesElement) {
@@ -153,10 +220,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     // check if message accessories has children
                     // yes = embed message, no = plain text
                     if (msgAccessoriesElement.childElementCount > 0) {
-                        embedGridSelector = `${contentSelector} > div > div[id*='message-accesories'] > article > div > div`;
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
-
-
                     }
 
                 }
@@ -208,6 +272,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         }
                     }
 
+                // for subsequent messages of the same user
                 } else if (!dataCustomId && !authorName && msgContent) {
 
                     if (msgContent.includes(`@${session._user.name} took`)
@@ -216,6 +281,42 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                         cd.startCooldown(timer._m_pickCd);
                     }
+
+                // for embedded messages
+                } else if (dataCustomId && authorName && !msgContent) {
+
+                    // TODO:
+                    // process will need to be sequential and linear ; not using switch statements
+                    // this way, actions can happen in succession of each other
+                    // i.e. for each drop, do scl on each card...
+
+
+                    // should always be available
+                    if (msgAccessoriesElement) {
+
+                        // check if message accessories has children
+                        // yes = embed message, no = plain text
+                        if (msgAccessoriesElement.childElementCount > 0) {
+                            embedGridTitle = getEmbedGridTitle(embedGridSelector);
+                            embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
+
+                            if (embedGridTitle.includes("DROP")) {
+
+                                // loop through grid fields element with either childNodes or children property
+                                if (embedGridFieldsElement) {
+                                    // drop action
+                                        // create an object for each card
+                                        // store object in global array
+                                        // select cards later based off of wl or events
+
+                                }
+
+                            }
+                        }
+
+                    }
+
+
                 }
             }
         }
