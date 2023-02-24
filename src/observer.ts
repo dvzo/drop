@@ -271,16 +271,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         // check for embedded / sdn text only grid
                         // check if dropped response contains the block grid
                         if (embedGridElement) {
-
-                            // TODO:
-                            // process will need to be sequential and linear ; not using switch statements
-                            // this way, actions can happen in succession of each other
-                            // i.e. for each drop, do scl on each card...
-
                             embedGridTitle = getEmbedGridTitle(embedGridSelector);
                             embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
 
-                            // drop grid
+                            // drop grid with no images
                             if (embedGridTitle.includes("DROP")) {
 
                                 // testing
@@ -297,24 +291,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     }
                                 }
 
-                            // check for single character lookup
-                            } else if (embedGridTitle.toLowerCase().trim() === "lookup") {
-
-                                // testing
-                                console.log("single lookup detected");
-
-                                // for each card -> get the WL and store it
-                                for (let i = 0; i < cards.length; i++) {
-
-                                    // send "scl name"
-
-                                    // if 
-
-                                }
-
-                                // TODO: need to clear this array with length = 0 at the end
-                                // select cards later based off of wl or events
-
+                                // check for single character lookup
                             }
 
                         }
@@ -346,7 +323,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                 }
                             }, timer._m_pickInterval);
                         }
-                    }
+                    } 
 
                 // for subsequent messages of the same user
                 } else if (!dataCustomId && !authorName && msgContent) {
@@ -356,6 +333,40 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         console.log(msgContent);
 
                         cd.startCooldown(timer._m_pickCd);
+                    }
+
+                // for other commands with embed grids i.e. scl
+                } else if (dataCustomId && authorName && !msgContent) {
+
+                    if (authorName === "SOFI" && embedGridElement) {
+                        embedGridTitle = getEmbedGridTitle(embedGridSelector);
+                        embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
+
+                        if (embedGridTitle.toLowerCase().trim() === "lookup") {
+
+                            // testing
+                            console.log("single lookup detected");
+
+                            // for each card -> get the WL and store it
+                            for (let i = 0; i < cards.length; i++) {
+
+                                // send "scl name"
+
+                                // if 
+
+                            }
+
+                            // TODO: need to clear this array with length = 0 at the end
+                            // select cards later based off of wl or events
+
+                            // check for multiple character lookup
+                        } else if (embedGridTitle.includes("characters")) {
+
+                            // testing
+                            console.log("multiple character lookup detected");
+
+                        }
+
                     }
 
                 }
