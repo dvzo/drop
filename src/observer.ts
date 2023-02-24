@@ -214,6 +214,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let embedGridTitle;
                 let embedGridFieldsElement;
 
+                // grid cards
+                let gridCards;
+
                 // should always be available
                 if (msgAccessoriesElement) {
 
@@ -304,6 +307,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                                 // loop through grid fields element with either childNodes or children property
                                 if (embedGridFieldsElement) {
+                                    gridCards = embedGridFieldsElement.children;
+
+                                    for (let i = 0; i < gridCards.length; i++) {
+
+                                    }
+
+
                                     // drop action
                                         // create an object for each card
                                         // store object in global array
