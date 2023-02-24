@@ -165,6 +165,26 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         return gridFieldsElement;
     }
 
+    /**
+     * return a card with gen, name, and series populated
+     * */
+    function createCard(cardDescription: string) {
+        let card = new Card();
+        let descriptionRaw = cardDescription.split('\n');
+        let description = descriptionRaw.filter(desc => desc != "");
+
+        for (let i = 0; i < description.length; i++) {
+            description.splice(i, 1, description[i].trim());
+        }
+
+        // [gen], [name], [series]
+        card.gen = parseInt(description[0]);
+        card.name = description[1];
+        card.series = description[2];
+
+        return card;
+    }
+
     // selector for all messages
     var msgSelector = "ol[class*='scroll']";
 
@@ -216,6 +236,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                 // grid cards
                 let gridCards;
+                let cardDescription;
+                let card;
 
                 // should always be available
                 if (msgAccessoriesElement) {
@@ -310,6 +332,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     gridCards = embedGridFieldsElement.children;
 
                                     for (let i = 0; i < gridCards.length; i++) {
+                                        cardDescription = (gridCards[i] as HTMLElement).innerText;
+                                        card = createCard(cardDescription); // populate card with descriptions
 
                                     }
 
