@@ -231,10 +231,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let msgContentElement = document.querySelector(`${contentSelector} > div`); // should always be available
 
                 // TODO: adding message accessories
+
                 // should always be visible
-                let msgAccessoriesElement = document.querySelector(`${contentSelector} > div > div[id*='message-accessories']`);
+                //let msgAccessoriesElement = document.querySelector(`${contentSelector} > div > div[id*='message-accessories']`);
+
                 // embedded grid which will contain the title and text we want
+                // article route is specific for sdn / card drop text only
+                // message-accessories should always be available
                 let embedGridSelector = `${contentSelector} > div > div[id*='message-accesories'] > article > div > div`;
+                let embedGridElement = document.querySelector(embedGridSelector);
                 let embedGridTitle;
                 let embedGridFieldsElement;
 
@@ -243,17 +248,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let cardDescription;
                 let card;
 
-                // should always be available
-                if (msgAccessoriesElement) {
-
-                    // check if message accessories has children
-                    // yes = embed message, no = plain text
-                    if (msgAccessoriesElement.childElementCount > 0) {
-                        embedGridTitle = getEmbedGridTitle(embedGridSelector);
-                    }
+                // if message 
+                if (embedGridElement) {
 
                 }
-
 
                 // i.e. "SOFI"
                 if (authorElement) {
@@ -275,6 +273,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 if (dataCustomId && authorName && msgContent) {
 
                     if (authorName === "SOFI" && msgContent.includes(`@${session._user.name} is dropping`)) {
+
+                        // check for embedded / sdn text only grid
+
+
                         let body = getBody(msgAccessoriesId, dataCustomId);
 
                         // TEST: print out body
