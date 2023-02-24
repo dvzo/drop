@@ -148,23 +148,25 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     if (authorName === "SOFI" && msgContent.includes(`@${session._user.name} is dropping`)) {
                         let body = getBody(msgAccessoriesId, dataCustomId);
 
-                        setTimeout(() => {
+                        if (!debug) {
+                            setTimeout(() => {
 
-                            if (cd.onCooldown) {
-                                console.log("unable to pick up cards, still on cooldown!");
+                                if (cd.onCooldown) {
+                                    console.log("unable to pick up cards, still on cooldown!");
 
-                            } else {
-                                fetch(session._requestUrl, {
-                                    "headers": session._header,
-                                    "referrer": session._referUrl,
-                                    "referrerPolicy": "strict-origin-when-cross-origin",
-                                    "body": body,
-                                    "method": "POST",
-                                    "mode": "cors",
-                                    "credentials": "include"
-                                });
-                            }
-                        }, timer._m_pickInterval);
+                                } else {
+                                    fetch(session._requestUrl, {
+                                        "headers": session._header,
+                                        "referrer": session._referUrl,
+                                        "referrerPolicy": "strict-origin-when-cross-origin",
+                                        "body": body,
+                                        "method": "POST",
+                                        "mode": "cors",
+                                        "credentials": "include"
+                                    });
+                                }
+                            }, timer._m_pickInterval);
+                        }
                     }
 
                 } else if (!dataCustomId && !authorName && msgContent) {
