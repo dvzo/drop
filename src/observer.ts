@@ -182,6 +182,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         card.name = description[1];
         card.series = description[2];
 
+        console.log("gen: " + card.gen);
+        console.log("name" + card.name);
+        console.log("series" + card.series);
+
         return card;
     }
 
