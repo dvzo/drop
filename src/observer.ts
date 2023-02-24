@@ -128,6 +128,17 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let msgContentElement = document.querySelector(`${contentSelector} > div`); // should always be available
 
                 // TODO: need to add the message accessories here
+                let msgAccessoriesElement = document.querySelector(`${contentSelector} > div > div[id*='message-accessories']`);
+
+                // should always be available
+                if (msgAccessoriesElement) {
+
+                    // TODO: check if msg accessories have children?
+                    // yes = embed
+                    // no = plain message
+
+                }
+
 
                 // i.e. "SOFI"
                 if (authorElement) {
