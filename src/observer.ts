@@ -278,7 +278,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                             if (embedGridTitle.includes("DROP")) {
 
                                 // testing
-                                console.log("drop detected");
+                                console.log("drop with no images detected");
 
                                 if (embedGridFieldsElement) {
                                     gridCards = embedGridFieldsElement.children; // 3 given cards
@@ -290,39 +290,39 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         cards.push(card);
                                     }
                                 }
+                            }
+                        }
 
-                                // check for single character lookup
+                        // needs else case so both drop cases dont get executed
+                        // for regular image card drops
+                        else {
+                            let body = getBody(msgAccessoriesId, dataCustomId);
+
+                            // TEST: print out body
+                            console.log("body: " + body);
+
+                            if (!debug) {
+                                setTimeout(() => {
+
+                                    if (cd.onCooldown) {
+                                        console.log("unable to pick up cards, still on cooldown!");
+
+                                    } else {
+                                        fetch(session._requestUrl, {
+                                            "headers": session._header,
+                                            "referrer": session._referUrl,
+                                            "referrerPolicy": "strict-origin-when-cross-origin",
+                                            "body": body,
+                                            "method": "POST",
+                                            "mode": "cors",
+                                            "credentials": "include"
+                                        });
+                                    }
+                                }, timer._m_pickInterval);
                             }
 
                         }
 
-                        // TODO: below needs to be an else statement so they both dont get ran
-
-
-                        let body = getBody(msgAccessoriesId, dataCustomId);
-
-                        // TEST: print out body
-                        console.log("body: " + body);
-
-                        if (!debug) {
-                            setTimeout(() => {
-
-                                if (cd.onCooldown) {
-                                    console.log("unable to pick up cards, still on cooldown!");
-
-                                } else {
-                                    fetch(session._requestUrl, {
-                                        "headers": session._header,
-                                        "referrer": session._referUrl,
-                                        "referrerPolicy": "strict-origin-when-cross-origin",
-                                        "body": body,
-                                        "method": "POST",
-                                        "mode": "cors",
-                                        "credentials": "include"
-                                    });
-                                }
-                            }, timer._m_pickInterval);
-                        }
                     } 
 
                 // for subsequent messages of the same user
