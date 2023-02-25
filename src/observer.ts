@@ -128,11 +128,35 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * generate body for request
+     * generate body for random request
      * */
     function getBody(msgAccessoriesId: string, dataCustomId: string): string {
         let cardPick = getRandomInt(3);
         let nonce = getRandomNonce(msgAccessoriesId);
+        let customId = `drop_${dataCustomId}_${cardPick}`;
+
+        let body = {
+            "type": 3,
+            "nonce": nonce,
+            "guild_id": session._guild.id,
+            "channel_id": session._channel.id,
+            "message_flags": 0,
+            "message_id": msgAccessoriesId,
+            "application_id": appId,
+            "session_id": session._id,
+            "data": {
+                "component_type": 2,
+                "custom_id": customId
+            }
+        }
+
+        return JSON.stringify(body);
+    }
+
+    /**
+     * generate body for single request
+     */
+    function getSingleBody(msgAccessoriesId: string, dataCustomId: string, nonce: string, cardPick: number): string {
         let customId = `drop_${dataCustomId}_${cardPick}`;
 
         let body = {
@@ -252,10 +276,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * set card stats in sequential order
      * cant use for loops here as it breaks the async calls
      */
-    async function setCardStats(gridCards: HTMLCollection) {
+    async function setCardStats(gridCards: HTMLCollection, msgAccessoriesId: string, dataCustomId: string) {
         let cardDescription: string;
         let card;
         let msgBody: string; // body changes for each request
+        let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
 
         // sleep once the cards have been dropped/appeared
         await sleep(timer._m_cmdCd);
@@ -346,17 +371,33 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         await sleep(timer._m_cmdCd);
         console.log(`loop ${cardIndex}: pass`);
 
+
+        /** after WL are all populated... */
         // TODO: sleep here again, compare which cards to grab
         // compare wishlist cards array
         setGrabsByWL();
 
         for (let i = 0; i < cards.length; i++) {
             if (cards[i].grab == true) {
-                console.log("grabbing: " + cards[i]);
+                console.log("grabbing: " + cards[i].name);
             }
         }
 
         //  go through all cards, and fetch request to grab
+
+        // make sure nonce is the same for all picks **
+
+        if (cards[0].grab == true) {
+
+        }
+
+        if (cards[1].grab == true) {
+
+        }
+
+        if (cards[2].grab == true) {
+
+        }
 
         // finally, reset the card index
         console.log("only happens once! reset index");
@@ -579,7 +620,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     gridCards = embedGridFieldsElement.children; // 3 given cards
 
                                     // populate the card stats
-                                    setCardStats(gridCards);
+                                    setCardStats(gridCards, msgAccessoriesId, dataCustomId);
 
                                 }
 
@@ -622,6 +663,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 // for subsequent messages of the same user
                 } else if (!dataCustomId && !authorName && msgContent) {
 
+                    // TODO: can remove cooldown for picked!
                     if (msgContent.includes(`@${session._user.name} took`)
                         || msgContent.includes(`@${session._user.name} picked`)) {
                         console.log(msgContent);
