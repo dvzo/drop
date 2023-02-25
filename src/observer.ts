@@ -7,6 +7,9 @@ import { Timer } from './timer';
  * */
 export var injectMutator = function (debug: boolean, appId: string, session: Session, timer: Timer, msgSelector: string) {
 
+    /** globals */
+    var cardIndex: number = 0;
+
     /**
      * cooldown class to control cooldowns between each request
      * */
