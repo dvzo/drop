@@ -308,6 +308,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                                 // scl here 3 times?
                                 // TODO: need to form the message request here
+                                // TODO: use debug variable here too in the future
+                                setTimeout(() => {
+
+                                    // TODO: use cooldown here as well
+
+                                });
+
                             }
                         }
 

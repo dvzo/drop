@@ -5,6 +5,7 @@ export class Timer {
     _total: number = 0;
     _m_pickInterval!: number
     _m_pickCd!: number
+    _m_cmdCd!: number
 
     get leader(): number {
         return this._leader;
@@ -52,5 +53,13 @@ export class Timer {
 
     set m_pickCd(newPickCd: number) {
         this._m_pickCd = newPickCd;
+    }
+
+    get m_cmdCd(): number {
+        return this._m_cmdCd;
+    }
+
+    set m_cmdCd(newCmdCd: number) {
+        this._m_cmdCd = newCmdCd;
     }
 }
