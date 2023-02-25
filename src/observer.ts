@@ -354,10 +354,33 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * async function to get wl number from list of characters
+     * function to get wl number from list of characters;
+     * may return NaN
      */
-    async function getCharactersLookupWL(cards: Card[], gridDescription: any) {
+    function getCharactersLookupWL(gridDescription: any): number {
+        let allDescriptions = gridDescription.children.innerText.trim(); // contains every element innertext in grid
+        let character = []; // single array to hold a character's info
+        let allCharacters = []; // 2d array to hold all characters, split by 4
+        let wl: string = "";
 
+        // keep chopping the description array until empty
+        while (allDescriptions.length) {
+            character = allDescriptions.splice(0, 4);
+            allCharacters.push(character);
+        }
+
+        for (let i = 0; i < allCharacters.length; i++) {
+
+            // match current character by name and series, then get wl
+            if (allCharacters[i][2] === cards[cardIndex].name
+                && allCharacters[i][3] === cards[cardIndex].series) {
+
+                    // get '<3 0' string; grab number
+                    wl = allCharacters[i][1].split(' ')[1];
+                }
+        }
+
+        return parseInt(wl);
     }
 
     // selector for all messages
@@ -518,6 +541,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
                         embedGridDescriptionElement = getEmbedGridDescriptionElement(embedGridSelector);
 
+                        // check for single character lookup
                         if (embedGridTitle.toLowerCase().trim() === "lookup") {
 
                             // testing
@@ -527,21 +551,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                             cards[cardIndex].wl = wl;
 
-
-                            // TODO: use async function here to use awaits?
-
-                            // for each card -> get the WL and store it
-
-                            // keep track of global index
-
-                            // TODO: need to clear this array with length = 0 at the end
-                            // select cards later based off of wl or events
-
-                            // check for multiple character lookup
+                        // check for multiple character lookup
                         } else if (embedGridTitle.includes("characters")) {
 
                             // testing
                             console.log("multiple character lookup detected");
+
+                            let wl = getCharactersLookupWL(embedGridDescriptionElement);
 
                         }
 
