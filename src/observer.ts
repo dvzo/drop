@@ -239,8 +239,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * test:
-     * populate cards
+     * set card stats in sequential order
+     * cant use for loops here as it breaks the async calls
      */
     async function setCardStats(gridCards: HTMLCollection) {
         let cardDescription: string;
@@ -254,13 +254,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // thinking to do sequential actions instead of for loop
 
         /** first card */
-        console.log(`delaying loop ${cardIndex}...`);
-        await sleep(timer._m_cmdCd);
-        console.log(`beginning loop ${cardIndex}`);
+        console.log("first card!");
 
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         card = createCard(cardDescription, cardIndex);
-
 
         // need to push the card before the lookup logic happens below
         cards.push(card);
@@ -278,23 +275,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             "credentials": "include"
         });
 
-        console.log(`message sent, sleeping loop ${cardIndex}...`);
-        await sleep(timer._m_cmdCd);
-        console.log(`loop ${cardIndex}: 4 seconds pass`);
-
         console.log(cards[cardIndex]);
+
+        console.log(`card created!, sleeping loop ${cardIndex}...`);
+        await sleep(timer._m_cmdCd);
+        console.log(`loop ${cardIndex}: pass`);
 
         // always update global index
         cardIndex++;
 
         /** second card */
-        console.log(`delaying loop ${cardIndex}...`);
-        await sleep(timer._m_cmdCd);
-        console.log(`beginning loop ${cardIndex}`);
-
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         card = createCard(cardDescription, cardIndex);
-
 
         // need to push the card before the lookup logic happens below
         cards.push(card);
@@ -312,23 +304,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             "credentials": "include"
         });
 
+        console.log(cards[cardIndex]);
+
         console.log(`message sent, sleeping loop ${cardIndex}...`);
         await sleep(timer._m_cmdCd);
-        console.log(`loop ${cardIndex}: 4 seconds pass`);
-
-        console.log(cards[cardIndex]);
+        console.log(`loop ${cardIndex}: pass`);
 
         // always update global index
         cardIndex++;
 
         /** third card */
-        console.log(`delaying loop ${cardIndex}...`);
-        await sleep(timer._m_cmdCd);
-        console.log(`beginning loop ${cardIndex}`);
-
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         card = createCard(cardDescription, cardIndex);
-
 
         // need to push the card before the lookup logic happens below
         cards.push(card);
@@ -346,12 +333,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             "credentials": "include"
         });
 
-        console.log(`message sent, sleeping loop ${cardIndex}...`);
-        await sleep(timer._m_cmdCd);
-        console.log(`loop ${cardIndex}: 4 seconds pass`);
-
         console.log(cards[cardIndex]);
 
+        console.log(`message sent, sleeping loop ${cardIndex}...`);
+        await sleep(timer._m_cmdCd);
+        console.log(`loop ${cardIndex}: pass`);
 
         // finally, reset the card index
         console.log("only happens once! reset index");
