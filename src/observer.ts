@@ -331,7 +331,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         cards.push(card);
 
                                         // TODO: use debug variable here too in the future
-                                        let msgBody = getMsgBody("sdn"); // send sdn
+                                        let msgBody = getMsgBody("scl"); // send scl
 
                                         fetch(session._msgUrl, {
                                             "headers": session._header,
