@@ -559,6 +559,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                             let wl = getCharactersLookupWL(embedGridDescriptionElement);
 
+                            // if card and wl exists, populate
+                            if (isNaN(wl)) {
+                                cards[cardIndex].wl = wl;
+                            } else {
+                                cards[cardIndex].wl = -1;
+                            }
+
                         }
 
                     }
