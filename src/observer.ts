@@ -438,6 +438,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         }
 
+        console.log("delay for card 2");
+        await sleep(timer._m_cmdCd);
+        console.log("end delay for card 2");
+
         // finally, reset the card index
         console.log("only happens once! reset index");
         cardIndex = 0;
