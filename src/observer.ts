@@ -160,7 +160,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * get the title of the embed grid element, given its grid selector
+     * get the title of the embed grid element
      * */
     function getEmbedGridTitle(embedGridSelector: string): string {
         let gridTitle: string = "";
@@ -174,12 +174,23 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * returns the grid field element for the main content
+     * returns the grid field element
+     * for drops without images
      * */
     function getEmbedGridFieldsElement(embedGridSelector: string): HTMLElement | null {
         let gridFieldsElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedFields']`);
 
         return gridFieldsElement;
+    }
+
+    /**
+     * returns the grid description element
+     * for lookup descriptions
+     * */
+    function getEmbedGridDescriptionElement(embedGridSelector: string): HTMLElement | null {
+        let gridDescriptionElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedDescription']`);
+
+        return gridDescriptionElement;
     }
 
     /**
@@ -221,6 +232,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * */
     function sleep(ms: number) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
+     * async function to get wl number from single lookup
+     */
+    async function getLookupWL(cards: Card[], grid: any) {
+
+    }
+
+    /**
+     * async function to get wl number from list of characters
+     */
+    async function getCharactersLookupWL(cards: Card[], grid: any) {
+
     }
 
     // selector for all messages
@@ -272,8 +297,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 // message-accessories should always be available
                 let embedGridSelector = `#${chatMsgId} > div > div[id*='message-accessories'] > article > div > div`;
                 let embedGridElement = document.querySelector(embedGridSelector);
-                let embedGridTitle;
-                let embedGridFieldsElement;
+                let embedGridTitle; // title of grid
+                let embedGridFieldsElement; // grid for drops
+                let embedGridDescriptionElement; // grid for lookups
 
                 console.log("grid element: " + embedGridElement);
 
@@ -405,12 +431,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                     if (embedGridElement) {
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
-                        embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
+                        embedGridDescriptionElement = getEmbedGridDescriptionElement(embedGridSelector);
 
                         if (embedGridTitle.toLowerCase().trim() === "lookup") {
 
                             // testing
                             console.log("single lookup detected");
+
+
+                            // TODO: use async function here to use awaits?
 
                             // for each card -> get the WL and store it
 
