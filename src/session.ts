@@ -12,6 +12,7 @@ export class Session {
     _user!: User;
     _guild!: Guild;
     _channel!: Channel;
+    _wlThresh!: number;
 
     get os(): OS {
         return this._os;
@@ -75,5 +76,13 @@ export class Session {
 
     set header(newHeader: HeadersInit) {
         this._header = newHeader;
+    }
+
+    get wlThresh(): number {
+        return this._wlThresh;
+    }
+
+    set wlThresh(wlThresh: number) {
+        this._wlThresh = wlThresh;
     }
 }

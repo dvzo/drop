@@ -47,7 +47,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         private _wl!: number;
         private _name!: string;
         private _series!: string;
-        private _grab: boolean = false;
+        private _grab: boolean = false; // false by default
 
         public get idx(): number {
             return this._idx;
@@ -221,8 +221,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // can also be "Event Card"
         gen = description[0].split(' ');
 
+        // automatically grab event cards; give special gen 0
         if (gen[0].toLowerCase().includes("event")) {
             card.gen = 0;
+            card.grab = true;
         } else {
             card.gen = parseInt(gen[1]);
         }
@@ -257,9 +259,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // sleep once the cards have been dropped/appeared
         await sleep(timer._m_cmdCd);
-
-        // TODO:
-        // thinking to do sequential actions instead of for loop
 
         /** first card */
         console.log("first card!");
@@ -348,6 +347,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log(`loop ${cardIndex}: pass`);
 
         // TODO: sleep here again, compare which cards to grab
+        // compare wishlist cards array
 
         // finally, reset the card index
         console.log("only happens once! reset index");
@@ -391,6 +391,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         return parseInt(wl);
+    }
+
+    /**
+     * compare wishlists in card array
+     * auto pick event cards
+     */
+    function setGrabsByWL() {
+        let wlThreshold = 50;
+        // TODO: case no event cards: 1 true winner
+
+        // TODO: case no event cards: when all WL are the same
+
+        // TODO: case when there is an event card but also a high WL card by threshold
+
     }
 
     // selector for all messages
