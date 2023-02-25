@@ -359,7 +359,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         cards.push(card);
 
                                         // TODO: use debug variable here too in the future
-                                        let msgBody = getMsgBody("scl"); // send scl
+                                        let msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
                                         fetch(session._msgUrl, {
                                             "headers": session._header,
@@ -426,10 +426,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                         cd.startCooldown(timer._m_pickCd);
                     }
-                }
 
-                // when cards list is populated
-                if (cards.length > 0 && authorName === "SOFI" && !msgContent) {
+                // for embed grids with no message content; character lookups
+                } else if (authorName === "SOFI" && !msgContent) {
 
                     if (embedGridElement) {
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
@@ -441,6 +440,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                             console.log("single lookup detected");
 
                             let wl = getLookupWL(embedGridDescriptionElement);
+
+                            cards[cardIndex].wl = wl;
 
 
                             // TODO: use async function here to use awaits?
