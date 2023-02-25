@@ -348,6 +348,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // TODO: sleep here again, compare which cards to grab
         // compare wishlist cards array
+        setGrabsByWL();
+
+        for (let i = 0; i < cards.length; i++) {
+            if (cards[i].grab == true) {
+                console.log("grabbing: " + cards[i]);
+            }
+        }
+
+        //  go through all cards, and fetch request to grab
 
         // finally, reset the card index
         console.log("only happens once! reset index");
@@ -467,12 +476,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 cards[i].grab = true;
             }
         }
-
-
-        // TODO: case no event cards: when all WL are the same, go for highest gen
-
-        // TODO: case when there is an event card but also a high WL card by threshold
-
     }
 
     // selector for all messages
