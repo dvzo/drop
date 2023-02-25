@@ -168,23 +168,33 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * return a card with gen, name, and series populated
      * */
-    function createCard(cardDescription: string) {
+    function createCard(cardDescription: string): Card {
         let card = new Card();
         let descriptionRaw = cardDescription.split('\n');
         let description = descriptionRaw.filter(desc => desc != "");
+        let gen: string[];
 
         for (let i = 0; i < description.length; i++) {
             description.splice(i, 1, description[i].trim());
         }
 
+        // split gen, as it will be "[Gen XXXX]"
+        // can also be "Event Card"
+        gen = description[0].split(' ');
+
+        if (gen[0].toLowerCase().includes("event")) {
+            card.gen = 0;
+        } else {
+            card.gen = parseInt(gen[1]);
+        }
+
         // [gen], [name], [series]
-        card.gen = parseInt(description[0]);
         card.name = description[1];
         card.series = description[2];
 
         console.log("gen: " + card.gen);
-        console.log("name" + card.name);
-        console.log("series" + card.series);
+        console.log("name: " + card.name);
+        console.log("series: " + card.series);
 
         return card;
     }
@@ -201,7 +211,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var cd = new Cooldown();
 
     // create list of current cards
-    var cards: Card[];
+    var cards: Card[] = [];
 
     // Callback function to execute when mutations are observed
     const callback = (mutationList: any, observer: any) => {
@@ -236,10 +246,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 // embedded grid which will contain the title and text we want
                 // article route is specific for sdn / card drop text only
                 // message-accessories should always be available
-                let embedGridSelector = `${contentSelector} > div > div[id*='message-accesories'] > article > div > div`;
+                let embedGridSelector = `#${chatMsgId} > div > div[id*='message-accessories'] > article > div > div`;
                 let embedGridElement = document.querySelector(embedGridSelector);
                 let embedGridTitle;
                 let embedGridFieldsElement;
+
+                console.log("grid element: " + embedGridElement);
 
                 // grid cards
                 let gridCards;
@@ -271,6 +283,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         // check for embedded / sdn text only grid
                         // check if dropped response contains the block grid
                         if (embedGridElement) {
+
+                            console.log("embed grid element: " + embedGridElement);
+
                             embedGridTitle = getEmbedGridTitle(embedGridSelector);
                             embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
 
@@ -290,6 +305,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         cards.push(card);
                                     }
                                 }
+
+                                // scl here 3 times?
+                                // TODO: need to form the message request here
                             }
                         }
 
