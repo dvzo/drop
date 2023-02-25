@@ -199,6 +199,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         return card;
     }
 
+    /**
+     * sleep function
+     * */
+    function sleep(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     // selector for all messages
     var msgSelector = "ol[class*='scroll']";
 
