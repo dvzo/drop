@@ -143,6 +143,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * returns an object literal message body property as a string for the sending a message
+     * removing nonce field
+     * */
+    function getMsgBody(content: string): string {
+        let bodyObj: object = {
+            "content": content,
+            "tts": false,
+            "flags": 0
+        }
+
+        return JSON.stringify(bodyObj);
+    }
+
+    /**
      * get the title of the embed grid element, given its grid selector
      * */
     function getEmbedGridTitle(embedGridSelector: string): string {
@@ -310,16 +324,29 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         cardDescription = (gridCards[i] as HTMLElement).innerText;
                                         card = createCard(cardDescription); // populate card with descriptions
 
-                                        // TODO: need to do commands here?
-                                        // TODO: need to form the message request here
-                                        // TODO: use debug variable here too in the future
-                                        setTimeout(() => {
-
-                                            // scl here 3 times?
-
-                                        }, timer._m_cmdCd);
-
+                                        // need to push the card before the lookup logic happens below
                                         cards.push(card);
+
+                                        // TODO: use debug variable here too in the future
+                                        let msgBody = getMsgBody("sdn"); // send sdn
+
+                                        fetch(session._msgUrl, {
+                                            "headers": session._header,
+                                            "referrer": session._referUrl,
+                                            "referrerPolicy": "strict-origin-when-cross-origin",
+                                            "body": msgBody,
+                                            "method": "POST",
+                                            "mode": "cors",
+                                            "credentials": "include"
+                                        });
+
+                                        // timing starts here
+                                        // sleep for 3.5 seconds
+                                        // callback will happen and should continue down below for
+                                        // scl logic
+                                        // pretty much need to estimate the time it takes to get the wishlist,
+                                        // update the card at the current time
+
                                     }
                                 }
 
@@ -368,11 +395,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                         cd.startCooldown(timer._m_pickCd);
                     }
+                }
 
-                // for other commands with embed grids i.e. scl
-                } else if (dataCustomId && authorName && !msgContent) {
+                // when cards list is populated
+                if (cards.length > 0 && authorName === "SOFI" && !msgContent) {
 
-                    if (authorName === "SOFI" && embedGridElement) {
+                    if (embedGridElement) {
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
                         embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
 
@@ -382,13 +410,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                             console.log("single lookup detected");
 
                             // for each card -> get the WL and store it
-                            for (let i = 0; i < cards.length; i++) {
 
-                                // send "scl name"
-
-                                // if 
-
-                            }
+                            // keep track of global index
 
                             // TODO: need to clear this array with length = 0 at the end
                             // select cards later based off of wl or events
@@ -404,6 +427,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     }
 
                 }
+
+                // should we still try card length logic...?
+
+
             }
         }
     }
