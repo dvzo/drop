@@ -235,16 +235,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * async function to get wl number from single lookup
+     * returns wl number from single lookup
      */
-    async function getLookupWL(cards: Card[], grid: any) {
+    function getLookupWL(gridDescription: any): number {
+        let cardWl: string = gridDescription.children[3].innerText.trim();
 
+        return parseInt(cardWl);
     }
 
     /**
      * async function to get wl number from list of characters
      */
-    async function getCharactersLookupWL(cards: Card[], grid: any) {
+    async function getCharactersLookupWL(cards: Card[], gridDescription: any) {
 
     }
 
@@ -437,6 +439,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                             // testing
                             console.log("single lookup detected");
+
+                            let wl = getLookupWL(embedGridDescriptionElement);
 
 
                             // TODO: use async function here to use awaits?
