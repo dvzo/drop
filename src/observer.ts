@@ -239,6 +239,21 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * test:
+     * populate cards
+     */
+    async function populate() {
+        for (let i = 0; i < 5; i++) {
+
+            await console.log("test");
+            console.log()
+
+
+        }
+
+    }
+
+    /**
      * returns wl number from single lookup
      */
     function getLookupWL(gridDescription: any): number {
@@ -471,8 +486,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     }
 
                 }
-
-                // should we still try card length logic...?
 
 
             }
