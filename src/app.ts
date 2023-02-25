@@ -27,7 +27,7 @@ import { msgSelector } from './declare/selectors';
     timer.delay = DELAY;
     timer._m_pickInterval = PICK_INTERVAL;
     timer._m_pickCd = PICK_CD;
-    timer._m_pickCd = CMD_CD;
+    timer._m_cmdCd = CMD_CD;
 
     // select os, user, guild, and channel
     let os = await optionSelect(OS_LIST, "os");
