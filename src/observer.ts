@@ -47,6 +47,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         private _wl!: number;
         private _name!: string;
         private _series!: string;
+        private _grab: boolean = false;
 
         public get idx(): number {
             return this._idx;
@@ -88,6 +89,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             this._series = series;
         }
 
+        public get grab(): boolean {
+            return this._grab;
+        }
+
+        public set grab(grab: boolean) {
+            this._grab = grab;
+        }
     }
 
     /**
@@ -338,6 +346,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log(`message sent, sleeping loop ${cardIndex}...`);
         await sleep(timer._m_cmdCd);
         console.log(`loop ${cardIndex}: pass`);
+
+        // TODO: sleep here again, compare which cards to grab
 
         // finally, reset the card index
         console.log("only happens once! reset index");
