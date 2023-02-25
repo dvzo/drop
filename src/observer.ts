@@ -42,18 +42,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * card class used to hold values of cards to request
      * */
     class Card {
-        private _id!: number;
+        private _idx!: number; // 0 - 2
         private _gen!: number;
         private _wl!: number;
         private _name!: string;
         private _series!: string;
 
-        public get id(): number {
-            return this._id;
+        public get idx(): number {
+            return this._idx;
         }
 
-        public set id(id: number) {
-            this._id = id;
+        public set idx(idx: number) {
+            this._idx = idx;
         }
 
         public get gen(): number {
@@ -196,11 +196,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * return a card with gen, name, and series populated
      * */
-    function createCard(cardDescription: string): Card {
+    function createCard(cardDescription: string, idx: number): Card {
         let card = new Card();
         let descriptionRaw = cardDescription.split('\n');
         let description = descriptionRaw.filter(desc => desc != "");
         let gen: string[];
+
+        // set card index
+        card.idx = idx;
 
         for (let i = 0; i < description.length; i++) {
             description.splice(i, 1, description[i].trim());
@@ -220,6 +223,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         card.name = description[1];
         card.series = description[2];
 
+        console.log("idx: " + card.idx);
         console.log("gen: " + card.gen);
         console.log("name: " + card.name);
         console.log("series: " + card.series);
