@@ -242,12 +242,40 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * test:
      * populate cards
      */
-    async function populate() {
-        for (let i = 0; i < 5; i++) {
+    async function setCardStats(gridCards: HTMLCollection) {
+        let cardDescription: string;
+        let card;
 
-            await console.log("test");
-            console.log()
+        // store cards in the global card array
+        for (let i = 0; i < gridCards.length; i++) {
+            cardDescription = (gridCards[i] as HTMLElement).innerText;
+            card = createCard(cardDescription, i);
 
+            // always update global index
+            cardIndex = i;
+
+            // need to push the card before the lookup logic happens below
+            cards.push(card);
+
+            // TODO: use debug variable here too in the future
+            let msgBody = getMsgBody(`scl ${card.name}`); // send scl
+
+            fetch(session._msgUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": msgBody,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
+
+            // timing starts here
+            // sleep for 3.5 seconds
+            // callback will happen and should continue down below for
+            // scl logic
+            // pretty much need to estimate the time it takes to get the wishlist,
+            // update the card at the current time
 
         }
 
@@ -369,38 +397,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                 if (embedGridFieldsElement) {
                                     gridCards = embedGridFieldsElement.children; // 3 given cards
 
-                                    // store cards in the global card array
-                                    for (let i = 0; i < gridCards.length; i++) {
-                                        cardDescription = (gridCards[i] as HTMLElement).innerText;
-                                        card = createCard(cardDescription, i);
+                                    // populate the card stats
+                                    setCardStats(gridCards);
 
-                                        // always update global index
-                                        cardIndex = i;
-
-                                        // need to push the card before the lookup logic happens below
-                                        cards.push(card);
-
-                                        // TODO: use debug variable here too in the future
-                                        let msgBody = getMsgBody(`scl ${card.name}`); // send scl
-
-                                        fetch(session._msgUrl, {
-                                            "headers": session._header,
-                                            "referrer": session._referUrl,
-                                            "referrerPolicy": "strict-origin-when-cross-origin",
-                                            "body": msgBody,
-                                            "method": "POST",
-                                            "mode": "cors",
-                                            "credentials": "include"
-                                        });
-
-                                        // timing starts here
-                                        // sleep for 3.5 seconds
-                                        // callback will happen and should continue down below for
-                                        // scl logic
-                                        // pretty much need to estimate the time it takes to get the wishlist,
-                                        // update the card at the current time
-
-                                    }
                                 }
 
 
