@@ -302,18 +302,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     for (let i = 0; i < gridCards.length; i++) {
                                         cardDescription = (gridCards[i] as HTMLElement).innerText;
                                         card = createCard(cardDescription); // populate card with descriptions
+
+                                        // TODO: need to do commands here?
+                                        // TODO: need to form the message request here
+                                        // TODO: use debug variable here too in the future
+                                        setTimeout(() => {
+
+                                            // scl here 3 times?
+
+                                        }, timer._m_cmdCd);
+
                                         cards.push(card);
                                     }
                                 }
 
-                                // scl here 3 times?
-                                // TODO: need to form the message request here
-                                // TODO: use debug variable here too in the future
-                                setTimeout(() => {
-
-                                    // TODO: use cooldown here as well
-
-                                });
 
                             }
                         }

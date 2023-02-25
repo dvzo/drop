@@ -4,7 +4,7 @@ import * as puppeteer from 'puppeteer';
 import { loadScreen, optionSelect, channelSelect, getLaunchOptions, echo } from './helper';
 import { Session } from './session';
 import { Timer } from './timer';
-import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, TIMEOUT_MULT } from './declare/constants';
+import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, TIMEOUT_MULT } from './declare/constants';
 import { injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
@@ -27,6 +27,7 @@ import { msgSelector } from './declare/selectors';
     timer.delay = DELAY;
     timer._m_pickInterval = PICK_INTERVAL;
     timer._m_pickCd = PICK_CD;
+    timer._m_pickCd = CMD_CD;
 
     // select os, user, guild, and channel
     let os = await optionSelect(OS_LIST, "os");
