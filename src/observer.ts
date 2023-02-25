@@ -394,14 +394,82 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * get highest card index from two cards that have false grabs
+     */
+    function getHighestCardIdx(card_1: Card, card_2: Card): number{
+        let highestCardIdx: number;
+
+        if (card_1.wl > card_2.wl) {
+            highestCardIdx = card_1.idx;
+        } else if (card_2.wl > card_1.wl) {
+            highestCardIdx = card_2.idx;
+
+        // if tied wishlist, get highest gen
+        } else {
+
+            if (card_1.gen > card_2.gen) {
+                highestCardIdx = card_1.idx;
+            } else if (card_2.gen > card_1.gen) {
+                highestCardIdx = card_2.idx;
+            } else {
+
+                // if both are completely equal, default to 2
+                highestCardIdx = card_2.idx;
+            }
+        }
+
+        return highestCardIdx;
+    }
+
+
+    /**
      * compare wishlists in card array
      * auto pick event cards
      */
     function setGrabsByWL() {
-        let wlThreshold = 50;
-        // TODO: case no event cards: 1 true winner
+        let highestCardIdx: number = 0; // default highest idx
+        let card_1 = cards[0];
+        let card_2 = cards[1];
+        let card_3 = cards[2];
 
-        // TODO: case no event cards: when all WL are the same
+        // compare cards 1 and 2, then compare to 3
+        if (card_1.grab == false && card_2.grab == false) {
+            highestCardIdx = getHighestCardIdx(card_1, card_2);
+
+            if (card_3.grab == false) {
+                highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_3);
+            }
+
+        // compare card 1 and 3, then compare to 2
+        } else if (card_1.grab == false && card_3.grab == false) {
+            highestCardIdx = getHighestCardIdx(card_1, card_3);
+
+            if (card_2.grab == false) {
+                highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_2);
+            }
+
+        // compare card 2 and 3, then compare to 1
+        } else if (card_2.grab == false && card_3.grab == false) {
+            highestCardIdx = getHighestCardIdx(card_2, card_3);
+
+            if (card_1.grab == false) {
+                highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_1);
+            }
+        }
+
+        console.log("highest wl card: " + cards[highestCardIdx]);
+
+        cards[highestCardIdx].grab = true;
+
+        //final WL threshold check for grabbables
+        for (let i = 0; i < cards.length; i++) {
+            if (cards[i].grab == false && cards[i].wl > session._wlThresh) {
+                cards[i].grab = true;
+            }
+        }
+
+
+        // TODO: case no event cards: when all WL are the same, go for highest gen
 
         // TODO: case when there is an event card but also a high WL card by threshold
 
