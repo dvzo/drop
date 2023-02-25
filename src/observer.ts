@@ -388,20 +388,61 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // make sure nonce is the same for all picks **
 
         if (cards[0].grab == true) {
+            let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 0);
 
+            await fetch(session._requestUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": body,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
         }
+
+        console.log("delay for card 0");
+        await sleep(timer._m_cmdCd);
+        console.log("end delay for card 0");
 
         if (cards[1].grab == true) {
+            let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 1);
 
+            await fetch(session._requestUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": body,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
         }
 
+        console.log("delay for card 1");
+        await sleep(timer._m_cmdCd);
+        console.log("end delay for card 1");
+
         if (cards[2].grab == true) {
+            let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 2);
+
+            await fetch(session._requestUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": body,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
 
         }
 
         // finally, reset the card index
         console.log("only happens once! reset index");
         cardIndex = 0;
+        console.log("empty card array");
+        cards.length = 0;
     }
 
     /**
