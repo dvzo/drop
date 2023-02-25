@@ -357,7 +357,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     // store cards in the global card array
                                     for (let i = 0; i < gridCards.length; i++) {
                                         cardDescription = (gridCards[i] as HTMLElement).innerText;
-                                        card = createCard(cardDescription); // populate card with descriptions
+                                        card = createCard(cardDescription, i);
+
+                                        // always update global index
+                                        cardIndex = i;
 
                                         // need to push the card before the lookup logic happens below
                                         cards.push(card);
