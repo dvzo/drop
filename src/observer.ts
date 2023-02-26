@@ -395,12 +395,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             }
         }
 
-        // TODO: remove awaits for fetches below?
+        // TESTING:
+        // move sleep timers only fetches?
 
         // make sure nonce is the same for all picks **
         if (cards[0].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 0);
 
+            console.log(`fetching card ${cards[0].name}...`);
+
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -410,15 +413,21 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "mode": "cors",
                 "credentials": "include"
             });
+
+            console.log("finishing up...");
+            await sleep(timer._m_cmdCd * 2);
+            console.log(`${cards[0].name} picked!`);
         }
 
-        console.log("delay for card 0");
-        await sleep(timer._m_cmdCd * 2);
-        console.log("end delay for card 0");
+        //console.log("delay for card 0");
+        //await sleep(timer._m_cmdCd * 2);
+        //console.log("end delay for card 0");
 
         if (cards[1].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 1);
 
+            console.log(`fetching card ${cards[1].name}...`);
+
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -428,15 +437,21 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "mode": "cors",
                 "credentials": "include"
             });
+
+            console.log("finishing up...");
+            await sleep(timer._m_cmdCd * 2);
+            console.log(`${cards[1].name} picked!`);
         }
 
-        console.log("delay for card 1");
-        await sleep(timer._m_cmdCd * 2);
-        console.log("end delay for card 1");
+        //console.log("delay for card 1");
+        //await sleep(timer._m_cmdCd * 2);
+        //console.log("end delay for card 1");
 
         if (cards[2].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 2);
 
+            console.log(`fetching card ${cards[2].name}...`);
+
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -447,11 +462,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
 
+            console.log("finishing up...");
+            await sleep(timer._m_cmdCd * 2);
+            console.log(`${cards[2].name} picked!`);
+
         }
 
-        console.log("delay for card 2");
-        await sleep(timer._m_cmdCd * 2);
-        console.log("end delay for card 2");
+        //console.log("delay for card 2");
+        //await sleep(timer._m_cmdCd * 2);
+        //console.log("end delay for card 2");
 
         // TODO: check if the cards can stil be picked up by this time?
 
@@ -551,7 +570,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         return highestCardIdx;
     }
-
 
     /**
      * compare wishlists in card array
