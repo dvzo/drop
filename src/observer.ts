@@ -262,6 +262,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         card.name = description[1];
         card.series = description[2];
 
+        // clip appended '-' for name and series if they were shortened
+        if (card.name[card.name.length - 1] == '-') {
+            card.name = card.name.slice(0, -1);
+        }
+
+        if (card.series[card.series.length - 1] == '-') {
+            card.series = card.series.slice(0, -1);
+        }
+
         console.log("idx: " + card.idx);
         console.log("gen: " + card.gen);
         console.log("name: " + card.name);
@@ -435,6 +444,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("delay for card 2");
         await sleep(timer._m_cmdCd * 2);
         console.log("end delay for card 2");
+
+        // TODO: check if the cards can stil be picked up by this time?
 
         // finally, reset the card index and empty the current card array
         console.log("only happens once! reset index");
