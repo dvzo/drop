@@ -477,6 +477,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // keep chopping the description array until empty
         while (allDescriptions.length) {
             character = allDescriptions.splice(0, 4);
+
+            console.log("character: " + character);
+
             allCharacters.push(character);
         }
 
