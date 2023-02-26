@@ -396,7 +396,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         console.log("delay for card 0");
-        await sleep(timer._m_cmdCd + 4000);
+        await sleep(timer._m_cmdCd * 2);
         console.log("end delay for card 0");
 
         if (cards[1].grab == true) {
@@ -414,7 +414,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         console.log("delay for card 1");
-        await sleep(timer._m_cmdCd + 4000);
+        await sleep(timer._m_cmdCd * 2);
         console.log("end delay for card 1");
 
         if (cards[2].grab == true) {
@@ -433,7 +433,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         console.log("delay for card 2");
-        await sleep(timer._m_cmdCd + 4000);
+        await sleep(timer._m_cmdCd * 2);
         console.log("end delay for card 2");
 
         // finally, reset the card index and empty the current card array
