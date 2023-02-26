@@ -77,11 +77,11 @@ import { msgSelector } from './declare/selectors';
 
     // sending initial message
     if (!DEBUG) {
-        await sendMsg(session, "sd");
+        await sendMsg(session, "sdn");
         let treasure = 0;
 
         var interval = setInterval(() => {
-            sendMsg(session, "sd").then(() => echo(`grabbing treasure #${treasure}`));
+            sendMsg(session, "sdn").then(() => echo(`grabbing treasure #${treasure}`));
             treasure++;
         }, SEND_INTERVAL);
     }
