@@ -286,12 +286,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         await sleep(timer._m_cmdCd);
 
         /** first card */
-        console.log("first card!");
-
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         card = createCard(cardDescription, cardIndex);
-
-        // need to push the card before the lookup logic happens below
         cards.push(card);
 
         // TODO: use debug variable here too in the future
@@ -319,8 +315,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         /** second card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         card = createCard(cardDescription, cardIndex);
-
-        // need to push the card before the lookup logic happens below
         cards.push(card);
 
         // TODO: use debug variable here too in the future
@@ -348,8 +342,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         /** third card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         card = createCard(cardDescription, cardIndex);
-
-        // need to push the card before the lookup logic happens below
         cards.push(card);
 
         // TODO: use debug variable here too in the future
@@ -373,8 +365,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
 
         /** after WL are all populated... */
-        // TODO: sleep here again, compare which cards to grab
-        // compare wishlist cards array
         setGrabsByWL();
 
         for (let i = 0; i < cards.length; i++) {
@@ -383,10 +373,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             }
         }
 
-        //  go through all cards, and fetch request to grab
-
         // make sure nonce is the same for all picks **
-
         if (cards[0].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 0);
 
@@ -442,10 +429,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         await sleep(timer._m_cmdCd);
         console.log("end delay for card 2");
 
-        // finally, reset the card index
+        // finally, reset the card index and empty the current card array
         console.log("only happens once! reset index");
-        cardIndex = 0;
         console.log("empty card array");
+        cardIndex = 0;
         cards.length = 0;
     }
 
@@ -529,6 +516,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // compare cards 1 and 2, then compare to 3
         if (card_1.grab == false && card_2.grab == false) {
+
+            console.log("card_1: " + card_1.wl + "vs card_2: " + card_2.wl);
             highestCardIdx = getHighestCardIdx(card_1, card_2);
 
             if (card_3.grab == false) {
@@ -552,7 +541,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             }
         }
 
-        console.log("highest wl card: " + cards[highestCardIdx]);
+        console.log("highest wl card: " + cards[highestCardIdx].name);
 
         cards[highestCardIdx].grab = true;
 
