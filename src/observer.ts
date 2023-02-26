@@ -247,10 +247,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // automatically grab event cards; give special gen 0
         if (gen[0].toLowerCase().includes("event")) {
+
+            console.log("event card! "); 
             card.gen = 0;
             card.grab = true;
         } else {
             card.gen = parseInt(gen[1]);
+
+            console.log("non event card! "); 
+            card.grab = false;
         }
 
         // [gen], [name], [series]
