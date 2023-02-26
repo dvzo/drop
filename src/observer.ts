@@ -458,7 +458,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         console.log("testing all descrptions");
 
-        let allDescriptions = gridDescription.children.innerText.trim(); // contains every element innertext in grid
+        let allDescriptionsElement = gridDescription.children; // contains every element innertext in grid
+        let allDescriptions = [];
+
+        for (let i = 0; i < allDescriptionsElement.length; i++) {
+            allDescriptions[i] = allDescriptionsElement[i].innerText.trim();
+        }
+
+        // need to loop through all elements, convert it to a string, and store it in descriptions array
 
         console.log(allDescriptions);
 
