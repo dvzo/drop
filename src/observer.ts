@@ -10,6 +10,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /** globals */
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
+    var eventCardExists: boolean = false; // check if event card exists
 
     /**
      * cooldown class to control cooldowns between each request
@@ -253,7 +254,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // automatically grab event cards; give special gen 0
         if (gen[0].toLowerCase().includes("event") || gen[0].toLowerCase().includes("rose")) {
 
-            console.log("event card! "); 
+            if (gen[0].toLowerCase().includes("event")) {
+                eventCardExists = true;
+            } else {
+                eventCardExists = false;
+            }
+
+            console.log("event card! ");
             card.gen = 0;
             card.grab = true;
         } else {
@@ -637,6 +644,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("highest wl card: " + cards[highestCardIdx].name);
 
         cards[highestCardIdx].grab = true;
+
+        // reset favorable card if an event card was chosen and threshold not met
+        if (eventCardExists && cards[highestCardIdx].wl < session._wlThresh) {
+            cards[highestCardIdx].grab = false;
+        }
 
         //final WL threshold check for grabbables
         for (let i = 0; i < cards.length; i++) {
