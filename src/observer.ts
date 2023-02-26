@@ -305,17 +305,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cards.push(card);
 
         // TODO: use debug variable here too in the future
-        msgBody = getMsgBody(`scl ${card.name}`); // send scl
+        // only send scl command to check unfavorable cards
+        if (cards[cardIndex].grab == false) {
+            msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
-        await fetch(session._msgUrl, {
-            "headers": session._header,
-            "referrer": session._referUrl,
-            "referrerPolicy": "strict-origin-when-cross-origin",
-            "body": msgBody,
-            "method": "POST",
-            "mode": "cors",
-            "credentials": "include"
-        });
+            await fetch(session._msgUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": msgBody,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
+        }
 
         console.log(cards[cardIndex]);
 
@@ -332,17 +335,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cards.push(card);
 
         // TODO: use debug variable here too in the future
-        msgBody = getMsgBody(`scl ${card.name}`); // send scl
+        // only send scl command to check unfavorable cards
+        if (cards[cardIndex].grab == false) {
+            msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
-        await fetch(session._msgUrl, {
-            "headers": session._header,
-            "referrer": session._referUrl,
-            "referrerPolicy": "strict-origin-when-cross-origin",
-            "body": msgBody,
-            "method": "POST",
-            "mode": "cors",
-            "credentials": "include"
-        });
+            await fetch(session._msgUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": msgBody,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
+        }
 
         console.log(cards[cardIndex]);
 
