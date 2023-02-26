@@ -492,10 +492,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // TODO: check if the cards can stil be picked up by this time?
 
         // finally, reset the card index and empty the current card array
+        // reset subsequent requests
         console.log("only happens once! reset index");
         console.log("empty card array");
         cardIndex = 0;
         cards.length = 0;
+        subRequest = false;
     }
 
     /**
