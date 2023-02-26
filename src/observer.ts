@@ -297,9 +297,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
 
         // sleep once the cards have been dropped/appeared
-
-        // TODO: dont need this await?
-        //await sleep(timer._m_cmdCd);
+        await sleep(timer._m_cmdCd);
 
         /** first card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
