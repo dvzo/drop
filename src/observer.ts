@@ -246,7 +246,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         gen = description[0].split(' ');
 
         // automatically grab event cards; give special gen 0
-        if (gen[0].toLowerCase().includes("event")) {
+        if (gen[0].toLowerCase().includes("event") || gen[0].toLowerCase().includes("rose")) {
 
             console.log("event card! "); 
             card.gen = 0;
