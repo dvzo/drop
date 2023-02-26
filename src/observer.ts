@@ -506,15 +506,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         if (card_1.wl > card_2.wl) {
             highestCardIdx = card_1.idx;
-        } else if (card_2.wl > card_1.wl) {
+        } else if (card_1.wl < card_2.wl) {
             highestCardIdx = card_2.idx;
 
         // if tied wishlist, get highest gen
         } else {
 
-            if (card_1.gen > card_2.gen) {
+            if (card_1.gen < card_2.gen) {
                 highestCardIdx = card_1.idx;
-            } else if (card_2.gen > card_1.gen) {
+            } else if (card_1.gen > card_2.gen) {
                 highestCardIdx = card_2.idx;
             } else {
 
