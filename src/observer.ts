@@ -468,12 +468,16 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         for (let i = 0; i < allCharacters.length; i++) {
 
+            console.log(`current lookup character: ${cards[cardIndex].name}`);
+
             // match current character by name and series, then get wl
             if (allCharacters[i][2] === cards[cardIndex].name
                 && allCharacters[i][3] === cards[cardIndex].series) {
 
                     // get '<3 0' string; grab number
                     wl = allCharacters[i][1].split(' ')[1];
+
+                    console.log(`lookup WL: ${wl}`);
                 }
         }
 
@@ -749,6 +753,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                 cards[cardIndex].wl = -1;
                             }
 
+                            console.log(`character lookup card: ${cards[cardIndex].name}, ${cards[cardIndex].wl}`)
                         }
 
                     }
