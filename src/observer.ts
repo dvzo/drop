@@ -468,26 +468,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * may return NaN
      */
     function getCharactersLookupWL(gridDescription: any): number {
-        // use includes function if names include '-'
-        let nameShortened = false;
-        let seriesShortened = false;
-
-        let nameLength = cards[cardIndex].name.length;
-        let seriesLength = cards[cardIndex].series.length;
-
-        // slice off the '-' for appended shorter card image texts
-        if (cards[cardIndex].name[nameLength] == '-') {
-            cards[cardIndex].name = cards[cardIndex].name.slice(0, -1);
-            nameShortened = true;
-        }
-
-        if (cards[cardIndex].series[seriesLength] == '-') {
-            cards[cardIndex].series = cards[cardIndex].series.slice(0, -1);
-            seriesShortened = true;
-        }
-
-        console.log("testing all descrptions");
-
         let allDescriptionsElement = gridDescription.children; // contains every element innertext in grid
         let allDescriptions = [];
 
@@ -522,40 +502,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // if last character of card image text name or series ends in -, remove it, and do a contains?
             // allCharacters will have the longer version of the name, only need to check for cards[cardIndex]
 
+            // match current character by name and series, then get wl
+            if (allCharacters[i][2].includes(cards[cardIndex].name)
+                && allCharacters[i][3].includes(cards[cardIndex].series)) {
 
-            if (nameShortened && seriesShortened) {
-                if (allCharacters[i][2].includes(cards[cardIndex].name)
-                    && allCharacters[i][3].includes(cards[cardIndex].series)) {
+                // get '<3 0' string; grab number
+                wl = allCharacters[i][1].split(' ')[1];
 
-                    // get '<3 0' string; grab number
-                    wl = allCharacters[i][1].split(' ')[1];
-                    console.log(`short name, short series - lookup WL: ${wl}`);
-                }
-            } else if (nameShortened && !seriesShortened) {
-                if (allCharacters[i][2].includes(cards[cardIndex].name)
-                    && allCharacters[i][3] === cards[cardIndex].series) {
-
-                    wl = allCharacters[i][1].split(' ')[1];
-                    console.log(`short name, regular series - lookup WL: ${wl}`);
-                }
-            } else if (!nameShortened && seriesShortened) {
-                if (allCharacters[i][2] === cards[cardIndex].name
-                    && allCharacters[i][3].includes(cards[cardIndex].series)) {
-
-                    wl = allCharacters[i][1].split(' ')[1];
-                    console.log(`regular name, short series - lookup WL: ${wl}`);
-                }
-            } else {
-
-                // match current character by name and series, then get wl
-                if (allCharacters[i][2] === cards[cardIndex].name
-                    && allCharacters[i][3] === cards[cardIndex].series) {
-
-                    // get '<3 0' string; grab number
-                    wl = allCharacters[i][1].split(' ')[1];
-
-                    console.log(`regular search lookup WL: ${wl}`);
-                }
+                console.log(`regular search lookup WL: ${wl}`);
             }
         }
 
