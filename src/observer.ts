@@ -739,7 +739,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                             cards[cardIndex].wl = wl;
 
                         // check for multiple character lookup
-                        } else if (embedGridTitle.includes("characters")) {
+                        } else if (embedGridTitle.toLowerCase().includes("characters")) {
 
                             // testing
                             console.log("multiple character lookup detected");
