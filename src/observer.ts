@@ -8,7 +8,8 @@ import { Timer } from './timer';
 export var injectMutator = function (debug: boolean, appId: string, session: Session, timer: Timer, msgSelector: string) {
 
     /** globals */
-    var cardIndex: number = 0;
+    var cardIndex: number = 0; // global card index to keep track of card array
+    var subRequest: boolean = false; // modifier for subsequent grab requests
 
     /**
      * cooldown class to control cooldowns between each request
@@ -159,6 +160,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     function getSingleBody(msgAccessoriesId: string, dataCustomId: string, nonce: string, cardPick: number): string {
         let customId = `drop_${dataCustomId}_${cardPick}`;
 
+        if (subRequest) {
+            nonce = getRandomNonce(msgAccessoriesId);
+        }
+
         let body = {
             "type": 3,
             "nonce": nonce,
@@ -305,6 +310,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cards.push(card);
 
         // TODO: use debug variable here too in the future
+
+        // TODO: move awaits inside of if statements here as well?
+
         // only send scl command to check unfavorable cards
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
@@ -414,6 +422,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
 
+            // set subsequent request for multiple grabs
+            subRequest = true;
+
             console.log("finishing up...");
             await sleep(timer._m_cmdCd * 2);
             console.log(`${cards[0].name} picked!`);
@@ -438,6 +449,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
 
+            // set subsequent request for multiple grabs
+            subRequest = true;
+
             console.log("finishing up...");
             await sleep(timer._m_cmdCd * 2);
             console.log(`${cards[1].name} picked!`);
@@ -461,6 +475,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "mode": "cors",
                 "credentials": "include"
             });
+
+            // set subsequent request for multiple grabs
+            subRequest = true;
 
             console.log("finishing up...");
             await sleep(timer._m_cmdCd * 2);
