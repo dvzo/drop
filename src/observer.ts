@@ -730,9 +730,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 // for subsequent messages of the same user
                 } else if (!dataCustomId && !authorName && msgContent) {
 
-                    // TODO: can remove cooldown for picked!
-                    if (msgContent.includes(`@${session._user.name} took`)
-                        || msgContent.includes(`@${session._user.name} picked`)) {
+                    // removing check for 'user picked' since multiple picks are allowed for val event
+                    if (msgContent.includes(`@${session._user.name} took`)) {
                         console.log(msgContent);
 
                         cd.startCooldown(timer._m_pickCd);
