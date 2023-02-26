@@ -763,11 +763,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                             let wl = getCharactersLookupWL(embedGridDescriptionElement);
 
-                            // if card and wl exists, populate
+                            // if card is not found, set wl to -1; else wl exists, populate
                             if (isNaN(wl)) {
-                                cards[cardIndex].wl = wl;
-                            } else {
                                 cards[cardIndex].wl = -1;
+                            } else {
+                                cards[cardIndex].wl = wl;
                             }
 
                             console.log(`character lookup card: ${cards[cardIndex].name}, ${cards[cardIndex].wl}`)
