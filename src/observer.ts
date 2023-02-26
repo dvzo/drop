@@ -521,22 +521,29 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             highestCardIdx = getHighestCardIdx(card_1, card_2);
 
             if (card_3.grab == false) {
+                console.log("highestWL: " + cards[highestCardIdx].wl + "vs card_3: " + card_3.wl);
                 highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_3);
             }
 
         // compare card 1 and 3, then compare to 2
         } else if (card_1.grab == false && card_3.grab == false) {
+
+            console.log("card_1: " + card_1.wl + "vs card_3: " + card_3.wl);
             highestCardIdx = getHighestCardIdx(card_1, card_3);
 
             if (card_2.grab == false) {
+                console.log("highestWL: " + cards[highestCardIdx].wl + "vs card_2: " + card_2.wl);
                 highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_2);
             }
 
         // compare card 2 and 3, then compare to 1
         } else if (card_2.grab == false && card_3.grab == false) {
+
+            console.log("card_2: " + card_2.wl + "vs card_3: " + card_3.wl);
             highestCardIdx = getHighestCardIdx(card_2, card_3);
 
             if (card_1.grab == false) {
+                console.log("highestWL: " + cards[highestCardIdx].wl + "vs card_1: " + card_1.wl);
                 highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_1);
             }
         }
