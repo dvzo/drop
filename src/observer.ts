@@ -462,7 +462,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let allDescriptions = [];
 
         for (let i = 0; i < allDescriptionsElement.length; i++) {
-            allDescriptions[i] = allDescriptionsElement[i].innerText.trim();
+            allDescriptions.push(allDescriptionsElement[i].innerText.trim());
         }
 
         // need to loop through all elements, convert it to a string, and store it in descriptions array
