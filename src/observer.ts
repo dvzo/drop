@@ -758,6 +758,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                 if (embedGridFieldsElement) {
                                     gridCards = embedGridFieldsElement.children; // 3 given cards
 
+                                    // empty card array here in case lookups are performed before drops
+                                    cards.length = 0;
+
                                     // populate the card stats
                                     setCardStats(gridCards, msgAccessoriesId, dataCustomId);
                                 }
