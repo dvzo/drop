@@ -1,7 +1,7 @@
 'use strict';
 
 import * as puppeteer from 'puppeteer';
-import { loadScreen, optionSelect, channelSelect, getLaunchOptions, echo } from './helper';
+import { loadScreen, debugMessage, optionSelect, channelSelect, getLaunchOptions, echo } from './helper';
 import { Session } from './session';
 import { Timer } from './timer';
 import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, WL_THRESH, TIMEOUT_MULT } from './declare/constants';
@@ -16,6 +16,10 @@ import { msgSelector } from './declare/selectors';
  */
 (async () => {
     loadScreen();
+
+    if (DEBUG) {
+        debugMessage();
+    }
 
     // create session object
     let session = new Session();

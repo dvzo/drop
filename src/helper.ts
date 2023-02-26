@@ -16,6 +16,18 @@ export function loadScreen(): void {
 }
 
 /**
+ * debug message
+ */
+export function debugMessage(): void {
+    console.log();
+    console.log("##################");
+    console.log("### DEBUG MODE ###"); 
+    console.log("##################");
+    console.log();
+    console.log();
+}
+
+/**
  * format for terminal messages
  * */
 export function echo(message: string): void {
