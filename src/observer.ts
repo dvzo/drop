@@ -455,7 +455,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * may return NaN
      */
     function getCharactersLookupWL(gridDescription: any): number {
+
+        console.log("testing all descrptions");
+
         let allDescriptions = gridDescription.children.innerText.trim(); // contains every element innertext in grid
+
+        console.log(allDescriptions);
+
+
         let character = []; // single array to hold a character's info
         let allCharacters = []; // 2d array to hold all characters, split by 4
         let wl: string = "";
