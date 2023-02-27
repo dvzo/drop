@@ -492,6 +492,21 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         }
 
+        // if all cards are false, grab a random one
+        if (cards[0].grab == false && cards[1].grab == false && cards[2].grab == false) {
+            let body = getBody(msgAccessoriesId, dataCustomId);
+
+            await fetch(session._requestUrl, {
+                "headers": session._header,
+                "referrer": session._referUrl,
+                "referrerPolicy": "strict-origin-when-cross-origin",
+                "body": body,
+                "method": "POST",
+                "mode": "cors",
+                "credentials": "include"
+            });
+        }
+
         //console.log("delay for card 2");
         //await sleep(timer._m_cmdCd * 2);
         //console.log("end delay for card 2");
