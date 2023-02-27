@@ -519,6 +519,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("empty card array");
         cardIndex = 0;
         cards.length = 0;
+        eventCardExists = false;
         subRequest = false;
     }
 
