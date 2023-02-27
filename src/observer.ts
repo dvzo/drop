@@ -853,7 +853,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                             // if card is not found, set wl to -1; else wl exists, populate
                             if (isNaN(wl)) {
-                                cards[cardIndex].wl = -1;
+                                cards[cardIndex].wl = 0;
                             } else {
                                 cards[cardIndex].wl = wl;
                             }
