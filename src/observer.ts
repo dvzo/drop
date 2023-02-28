@@ -433,7 +433,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             subRequest = true;
 
             console.log("finishing up...");
-            await sleep(timer._m_cmdCd * 2);
+            //await sleep(timer._m_cmdCd * 2);
+            await sleep(timer._m_cmdCd);
             console.log(`${cards[0].name} picked!`);
         }
 
@@ -460,6 +461,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             subRequest = true;
 
             console.log("finishing up...");
+            //await sleep(timer._m_cmdCd * 2);
             await sleep(timer._m_cmdCd * 2);
             console.log(`${cards[1].name} picked!`);
         }
@@ -487,6 +489,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             subRequest = true;
 
             console.log("finishing up...");
+            //await sleep(timer._m_cmdCd * 2);
             await sleep(timer._m_cmdCd * 2);
             console.log(`${cards[2].name} picked!`);
 
