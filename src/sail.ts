@@ -74,7 +74,9 @@ export async function dashboard(page: Page, session: Session, timer: Timer): Pro
  * sail to the final destination, the channel, the grand line!
  * */
 export async function grandLine(page: Page, timer: Timer) {
-    await page.waitForSelector(msgSelector.slate, { timeout: timer._leader })
+    // await page.waitForSelector(msgSelector.slate, { timeout: timer._leader })
+    // TESTING: removing timeout for grandline
+    await page.waitForSelector(msgSelector.slate, { timeout: 0 })
         .then(() => echo("reached the grand line!"),
             () => { throw new Error("unable to reach the grand line! :("); });
 
