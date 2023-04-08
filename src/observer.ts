@@ -333,8 +333,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * get element of a card given its index and collection
      */
-    function getCardElement(gridCards: HTMLCollection, cardIndex: number) {
-        let fieldName: ChildNode | null = (gridCards[cardIndex] as HTMLElement).firstChild;
+    //function getCardElement(gridCards: HTMLCollection, cardIndex: number) {
+    function getCardElement(gridCards: HTMLElement): string | null {
+        let fieldName: ChildNode | null = gridCards.firstChild;
         let emojiContainer: ChildNode | null;
         let img: ChildNode | null;
         let cardElement: string | null;
@@ -351,30 +352,32 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     if (cardElement != null) {
 
                         if (cardElement.includes(CardElement.Earth)) {
-                            return CardElement.Earth
+                            return CardElement.Earth.toString();
 
                         } else if (cardElement.includes(CardElement.Fire)) {
-                            return CardElement.Fire
+                            return CardElement.Fire.toString();
 
                         } else if (cardElement.includes(CardElement.Ice)) {
-                            return CardElement.Ice;
+                            return CardElement.Ice.toString();
 
                         } else if (cardElement.includes(CardElement.Metal)) {
-                            return CardElement.Metal;
+                            return CardElement.Metal.toString();
 
                         } else if (cardElement.includes(CardElement.Void)) {
-                            return CardElement.Void;
+                            return CardElement.Void.toString();
 
                         } else if (cardElement.includes(CardElement.Wind)) {
-                            return CardElement.Wind;
+                            return CardElement.Wind.toString();
 
                         } else if (cardElement.includes(CardElement.Wood)) {
-                            return CardElement.Wood;
+                            return CardElement.Wood.toString();
                         }
                     }
                 }
             }
         }
+
+        return null;
     }
 
     /**
@@ -383,7 +386,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      */
     async function setCardStats(gridCards: HTMLCollection, msgAccessoriesId: string, dataCustomId: string) {
         let cardDescription: string;
-        let cardElement: string;
+        let cardElement: string | null;
         let card;
         let msgBody: string; // body changes for each request
         let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
@@ -393,19 +396,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         /** first card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
-
+// TEST
         /** find nested element within child nodes for card */
-        // TODO:
-        if ((gridCards[cardIndex] as HTMLElement) != null
-            && (gridCards[cardIndex] as Node).firstChild != null) {
-            
-            let childNode = (gridCards[cardIndex] as Node).firstChild;
-
-            if (childNode != null) {
-                let otherchild = childNode.firstChild;
-            }
-        }
-// - cardElement = (gridCards[cardIndex] as HTMLElement).firstChild.firstChild.firstChild.alt || .ariaLabel
+        cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
+        console.log(cardElement);
 
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
@@ -440,6 +434,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         /** second card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
+// TEST
+        /** find nested element within child nodes for card */
+        cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
+        console.log(cardElement);
+
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
 
@@ -470,6 +469,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         /** third card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
+
+// TEST
+        /** find nested element within child nodes for card */
+        cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
+        console.log(cardElement);
+
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
 
