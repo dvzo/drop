@@ -333,7 +333,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * get element of a card given its index and collection
      */
-    function setCardElement(gridCards: HTMLCollection, cardIndex: number) {
+    function getCardElement(gridCards: HTMLCollection, cardIndex: number) {
         let fieldName: ChildNode | null = (gridCards[cardIndex] as HTMLElement).firstChild;
         let emojiContainer: ChildNode | null;
         let img: ChildNode | null;
@@ -351,37 +351,30 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     if (cardElement != null) {
 
                         if (cardElement.includes(CardElement.Earth)) {
-                            cards[cardIndex].element = CardElement.Earth;
+                            return CardElement.Earth
 
                         } else if (cardElement.includes(CardElement.Fire)) {
-                            cards[cardIndex].element = CardElement.Fire;
+                            return CardElement.Fire
 
                         } else if (cardElement.includes(CardElement.Ice)) {
-                            cards[cardIndex].element = CardElement.Ice;
+                            return CardElement.Ice;
 
                         } else if (cardElement.includes(CardElement.Metal)) {
-                            cards[cardIndex].element = CardElement.Metal;
+                            return CardElement.Metal;
 
                         } else if (cardElement.includes(CardElement.Void)) {
-                            cards[cardIndex].element = CardElement.Void;
+                            return CardElement.Void;
 
                         } else if (cardElement.includes(CardElement.Wind)) {
-                            cards[cardIndex].element = CardElement.Wind;
+                            return CardElement.Wind;
 
                         } else if (cardElement.includes(CardElement.Wood)) {
-                            cards[cardIndex].element = CardElement.Wood;
+                            return CardElement.Wood;
                         }
-
-                        // test print card element
-                        console.log(`card ${cards[cardIndex].name} element: ${cards[cardIndex].element}`);
-
                     }
-
                 }
-
             }
         }
-
     }
 
     /**
@@ -402,6 +395,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
 
         /** find nested element within child nodes for card */
+        // TODO:
         if ((gridCards[cardIndex] as HTMLElement) != null
             && (gridCards[cardIndex] as Node).firstChild != null) {
             
