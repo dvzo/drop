@@ -50,6 +50,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         private _name!: string;
         private _series!: string;
         private _grab: boolean = false; // false by default
+        private _element!: string;
 
         public get idx(): number {
             return this._idx;
@@ -98,6 +99,36 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         public set grab(grab: boolean) {
             this._grab = grab;
         }
+
+        public get element(): string {
+            return this._element;
+        }
+
+        public set element(element: string) {
+            this._element = element;
+        }
+    }
+
+    /**
+     * card element object to hold all element emoji strings
+     * alt=":woodw:" arialabel=":woodw:"
+        - wood: ":woodw:"
+        - wind: ":windw:"
+        - void: ":voidw:"
+        - ice: ":iceew:"
+        - metal: ":metalw:"
+        - light: ":lightw:"
+        - fire: ":firew:"
+        - earth: ":earthw:" 
+     */
+    enum CardElement {
+        Wood = "wood",
+        Wind = "wind",
+        Void = "void",
+        Ice = "ice",
+        Metal = "metal",
+        Fire = "fire",
+        Earth = "earth"
     }
 
     /**
