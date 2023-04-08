@@ -1,3 +1,4 @@
+import { Page } from 'puppeteer';
 import { Session } from './session';
 import { Timer } from './timer';
 
@@ -122,13 +123,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         - earth: ":earthw:" 
      */
     enum CardElement {
-        Wood = "wood",
-        Wind = "wind",
-        Void = "void",
+        Earth = "earth",
+        Fire = "fire",
         Ice = "ice",
         Metal = "metal",
-        Fire = "fire",
-        Earth = "earth"
+        Void = "void",
+        Wind = "wind",
+        Wood = "wood"
     }
 
     /**
@@ -330,11 +331,66 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * get element of a card given its index and collection
+     */
+    function setCardElement(gridCards: HTMLCollection, cardIndex: number) {
+        let fieldName: ChildNode | null = (gridCards[cardIndex] as HTMLElement).firstChild;
+        let emojiContainer: ChildNode | null;
+        let img: ChildNode | null;
+        let cardElement: string | null;
+
+        if (fieldName != null) {
+            emojiContainer = fieldName.firstChild;
+
+            if (emojiContainer != null) {
+                img = emojiContainer.firstChild;
+
+                if (img != null) {
+                    cardElement = (img as Element).getAttribute("alt"); // i.e. ":iceew:"
+
+                    if (cardElement != null) {
+
+                        if (cardElement.includes(CardElement.Earth)) {
+                            cards[cardIndex].element = CardElement.Earth;
+
+                        } else if (cardElement.includes(CardElement.Fire)) {
+                            cards[cardIndex].element = CardElement.Fire;
+
+                        } else if (cardElement.includes(CardElement.Ice)) {
+                            cards[cardIndex].element = CardElement.Ice;
+
+                        } else if (cardElement.includes(CardElement.Metal)) {
+                            cards[cardIndex].element = CardElement.Metal;
+
+                        } else if (cardElement.includes(CardElement.Void)) {
+                            cards[cardIndex].element = CardElement.Void;
+
+                        } else if (cardElement.includes(CardElement.Wind)) {
+                            cards[cardIndex].element = CardElement.Wind;
+
+                        } else if (cardElement.includes(CardElement.Wood)) {
+                            cards[cardIndex].element = CardElement.Wood;
+                        }
+
+                        // test print card element
+                        console.log(`card ${cards[cardIndex].name} element: ${cards[cardIndex].element}`);
+
+                    }
+
+                }
+
+            }
+        }
+
+    }
+
+    /**
      * set card stats in sequential order
      * cant use for loops here as it breaks the async calls
      */
     async function setCardStats(gridCards: HTMLCollection, msgAccessoriesId: string, dataCustomId: string) {
         let cardDescription: string;
+        let cardElement: string;
         let card;
         let msgBody: string; // body changes for each request
         let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
@@ -344,6 +400,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         /** first card */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
+
+        /** find nested element within child nodes for card */
+        if ((gridCards[cardIndex] as HTMLElement) != null
+            && (gridCards[cardIndex] as Node).firstChild != null) {
+            
+            let childNode = (gridCards[cardIndex] as Node).firstChild;
+
+            if (childNode != null) {
+                let otherchild = childNode.firstChild;
+            }
+        }
+// - cardElement = (gridCards[cardIndex] as HTMLElement).firstChild.firstChild.firstChild.alt || .ariaLabel
+
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
 
