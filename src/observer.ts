@@ -398,12 +398,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // sleep once the cards have been dropped/appeared
         await sleep(timer._m_cmdCd);
 
-        /** first card */
+        /** first card, get description and element */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
-// TEST
-        /** find nested element within child nodes for card */
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
-        console.log(cardElement);
 
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
@@ -436,12 +433,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // always update global index
         cardIndex++;
 
-        /** second card */
+        /** second card, get description and element */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
-// TEST
-        /** find nested element within child nodes for card */
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
-        console.log(cardElement);
 
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
@@ -471,13 +465,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // always update global index
         cardIndex++;
 
-        /** third card */
+        /** third card, get description and element */
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
-
-// TEST
-        /** find nested element within child nodes for card */
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
-        console.log(cardElement);
 
         card = createCard(cardDescription, cardIndex);
         cards.push(card);
