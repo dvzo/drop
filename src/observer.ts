@@ -551,36 +551,47 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // final cooldown before sending the request to grab a card
         await sleep(timer._m_cmdCd);
 
+        // logging criteria
+        console.log("--- CRITERIA DROPS ---")
+
         // prioritize event cards
         if (eventCardExists) {
+            console.log("- event card exists...");
 
             // only grab an extra card during an event if a card has a wl >= the wl threshold
             if (dropHasWLThresholdCard()) {
+                console.log("- grabbing extra card!");
                 setGrabsByWL();
             }
 
             // check if drops are above the wl minumum
         } else if (dropHasWLMinimum()) {
+            console.log("- drop has wl minimum...");
             setGrabsByWL();
 
             // check if drops have the first priority element
         } else if (dropHasPriorityElement(priorityElement_1)) {
+            console.log(`- drop has priority element 1: ${priorityElement_1}`);
             setGrabsByElement(priorityElement_1);
 
             // next, check if drops have low gens
         } else if (dropHasLowGenCard()) {
+            console.log("- drop has low gen card...");
             setGrabsByGen();
 
             // next, check if drops have the second priority element
         } else if (dropHasPriorityElement(priorityElement_2)) {
+            console.log(`- drop has priority element 2: ${priorityElement_2}`);
             setGrabsByElement(priorityElement_2);
 
             // next, check if drops have the third priority element
         } else if (dropHasPriorityElement(priorityElement_3)) {
+            console.log(`- drop has priority element 3: ${priorityElement_3}`);
             setGrabsByElement(priorityElement_3);
 
             // finally, get the lowest gen available
         } else {
+            console.log("- drop has no other criteria, grabbing lowest gen card...");
             setGrabsByGen();
 
         }
@@ -691,9 +702,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         // need to loop through all elements, convert it to a string, and store it in descriptions array
-
         console.log(allDescriptions);
-
 
         let character = []; // single array to hold a character's info
         let allCharacters = []; // 2d array to hold all characters, split by 4
