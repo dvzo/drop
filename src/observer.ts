@@ -503,13 +503,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log(`loop ${cardIndex}: pass`);
 
 // TESTING
-
-        let testThreshold = 25;
-        let priorityElement = CardElement.Light.toString();
-
         /** set which cards to grab here, after WL are all populated */
-        if (cards[0].wl >= testThreshold || cards[1].wl >= testThreshold
-            || cards[2].wl >= testThreshold) {
+        if (cards[0].wl >= session._wlMin || cards[1].wl >= session._wlMin
+            || cards[2].wl >= session._wlMin) {
 
             setGrabsByWL();
 
@@ -519,7 +515,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             || cards[2].element.includes(priorityElement_1)) {
 
             setGrabsByElement(priorityElement_1);
+
+        // next, prioritize low gens
         } else if () {
+
+            setGrabsByGen();
 
         }
 
@@ -712,7 +712,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
     /**
      * get the index of the lowest gen card
-     * used with getHighestCardIdx and getPriorityElementIdx
+     * also used in else cases for finding highest wl card or priority elements
      */
     function getLowestGenIdx(card_1: Card, card_2: Card): number {
         let lowestGenIdx: number;
@@ -836,7 +836,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * check cards if they have the priority element, and set their grabs
      */
     function setGrabsByElement(priorityElement: string): void {
-        let priorityElementIndex: number = 0; // default highest idx
+        let priorityElementIndex: number = 0; // default priority element index
         let card_1 = cards[0];
         let card_2 = cards[1];
         let card_3 = cards[2];
@@ -888,6 +888,64 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("priority card element: " + cards[priorityElementIndex].element);
 
         cards[priorityElementIndex].grab = true;
+    }
+
+    /**
+     * set grabs by lowest gen number
+     */
+    function setGrabsByGen(): void {
+        let lowestGenIndex: number = 0; // default lowest gen index
+        let card_1 = cards[0];
+        let card_2 = cards[1];
+        let card_3 = cards[2];
+
+        // compare card 1 and 2, and then 3
+        if (card_1.grab == false && card_2.grab == false) {
+            console.log(`card 1 gen: ${card_1.gen}`);
+            console.log(`card 2 gen: ${card_2.gen}`);
+
+            lowestGenIndex = getLowestGenIdx(card_1, card_2);
+
+            if (card_3.grab == false) {
+                console.log(`card ${lowestGenIndex + 1} gen: ${cards[lowestGenIndex].gen}`);
+                console.log(`card 3 gen: ${card_3.gen}`);
+
+                lowestGenIndex = getLowestGenIdx(cards[lowestGenIndex], card_3);
+            }
+
+        // compare card 1 and 3, and then 2
+        } else if (card_1.grab == false && card_3.grab == false) {
+            console.log(`card 1 gen: ${card_1.gen}`);
+            console.log(`card 3 gen: ${card_3.gen}`);
+
+            lowestGenIndex = getLowestGenIdx(card_1, card_3);
+
+            if (card_2.grab == false) {
+                console.log(`card ${lowestGenIndex + 1} gen: ${cards[lowestGenIndex].gen}`);
+                console.log(`card 2 gen: ${card_2.gen}`);
+
+                lowestGenIndex = getLowestGenIdx(cards[lowestGenIndex], card_2);
+            }
+
+        // compare card 2 and 3, and then 1
+        } else if (card_2.grab == false && card_3.grab == false) {
+            console.log(`card 2 gen: ${card_2.gen}`);
+            console.log(`card 3 gen: ${card_3.gen}`);
+
+            lowestGenIndex = getLowestGenIdx(card_2, card_3);
+
+            if (card_1.grab == false) {
+                console.log(`card ${lowestGenIndex + 1} gen: ${cards[lowestGenIndex].gen}`);
+                console.log(`card 1 gen: ${card_1.gen}`);
+
+                lowestGenIndex = getLowestGenIdx(cards[lowestGenIndex], card_1);
+            }
+        }
+
+        console.log("low gen card name: " + cards[lowestGenIndex].name);
+        console.log("low gen card number: " + cards[lowestGenIndex].gen);
+
+        cards[lowestGenIndex].grab = true;
     }
 
     // selector for all messages
