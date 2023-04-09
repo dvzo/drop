@@ -517,10 +517,24 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             setGrabsByElement(priorityElement_1);
 
         // next, prioritize low gens
-        } else if () {
+        } else if (cards[0].gen <= session._lowGen || cards[1].gen <= session._lowGen
+            || cards[2].gen <= session._lowGen) {
 
             setGrabsByGen();
 
+        // next, prioritize next priority element
+        } else if (cards[0].element.includes(priorityElement_2)
+            || cards[1].element.includes(priorityElement_2)
+            || cards[2].element.includes(priorityElement_2)) {
+
+            setGrabsByElement(priorityElement_2);
+
+        // finally, prioritize last priority element
+        } else if (cards[0].element.includes(priorityElement_3)
+            || cards[1].element.includes(priorityElement_3)
+            || cards[2].element.includes(priorityElement_3)) {
+
+            setGrabsByElement(priorityElement_3);
         }
 
         /** after WL are all populated... */
