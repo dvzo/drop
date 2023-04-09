@@ -8,11 +8,6 @@ import { Timer } from './timer';
  * */
 export var injectMutator = function (debug: boolean, appId: string, session: Session, timer: Timer, msgSelector: string) {
 
-    /** globals */
-    var cardIndex: number = 0; // global card index to keep track of card array
-    var subRequest: boolean = false; // modifier for subsequent grab requests
-    var eventCardExists: boolean = false; // check if event card exists
-
     /**
      * cooldown class to control cooldowns between each request
      * */
@@ -51,7 +46,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         private _name!: string;
         private _series!: string;
         private _grab: boolean = false; // false by default
-        private _element!: string | null;
+        private _element!: string;
 
         public get idx(): number {
             return this._idx;
@@ -101,11 +96,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             this._grab = grab;
         }
 
-        public get element(): string | null {
+        public get element(): string {
             return this._element;
         }
 
-        public set element(element: string | null) {
+        public set element(element: string) {
             this._element = element;
         }
     }
@@ -132,6 +127,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         Wind = "wind",
         Wood = "wood"
     }
+
+    /** globals */
+    var cardIndex: number = 0; // global card index to keep track of card array
+    var subRequest: boolean = false; // modifier for subsequent grab requests
+    var eventCardExists: boolean = false; // check if event card exists
+    var wlMinimum: number = 25; // minimum wishlist number to grab
+    var priorityElement_1: string = CardElement.Light.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_2: string = CardElement.Fire.toString();
+    var priorityElement_3: string = CardElement.Wind.toString();
 
     /**
      * from helpers 
@@ -307,7 +311,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         card.name = description[1];
         card.series = description[2];
 
-        card.element = cardElement;
+        card.element = cardElement ? cardElement : "";
 
         // clip appended '-' for name and series if they were shortened
         if (card.name[card.name.length - 1] == '-') {
@@ -498,8 +502,27 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         await sleep(timer._m_cmdCd);
         console.log(`loop ${cardIndex}: pass`);
 
+// TESTING
+
+        let testThreshold = 25;
+        let priorityElement = CardElement.Light.toString();
+
+        /** set which cards to grab here, after WL are all populated */
+        if (cards[0].wl >= testThreshold || cards[1].wl >= testThreshold
+            || cards[2].wl >= testThreshold) {
+
+            setGrabsByWL();
+
+        } else if (cards[0].element.includes(priorityElement)
+            || cards[1].element.includes(priorityElement)
+            || cards[2].element.includes(priorityElement)) {
+
+            setGrabsByElement();
+
+        }
+
         /** after WL are all populated... */
-        setGrabsByWL();
+        // setGrabsByWL();
 
         for (let i = 0; i < cards.length; i++) {
             if (cards[i].grab == true) {
@@ -686,9 +709,29 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * get the index of the lowest gen card
+     * used with getHighestCardIdx and getPriorityElementIdx
+     */
+    function getLowestGenIdx(card_1: Card, card_2: Card): number {
+        let lowestGenIdx: number;
+
+        if (card_1.gen < card_2.gen) {
+            lowestGenIdx = card_1.idx;
+        } else if (card_1.gen > card_2.gen) {
+            lowestGenIdx = card_2.idx;
+        } else {
+
+            // if both are completely equal, default to 2
+            lowestGenIdx = card_2.idx;
+        }
+
+        return lowestGenIdx;
+    }
+
+    /**
      * get highest card index from two cards that have false grabs
      */
-    function getHighestCardIdx(card_1: Card, card_2: Card): number{
+    function getHighestCardIdx(card_1: Card, card_2: Card): number {
         let highestCardIdx: number;
 
         if (card_1.wl > card_2.wl) {
@@ -696,7 +739,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         } else if (card_1.wl < card_2.wl) {
             highestCardIdx = card_2.idx;
 
-        // if tied wishlist, get highest gen
+        // if tied wishlist, get lowest gen
         } else {
 
             if (card_1.gen < card_2.gen) {
@@ -772,6 +815,67 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 cards[i].grab = true;
             }
         }
+    }
+
+    /**
+     * get the index of the prioritized element
+     * can be used for priority elements given in parameter
+     */
+    function getPriorityElementIdx(card_1: Card, card_2: Card, priorityElement: string): number {
+        let priorityElementIndex: number;
+
+        if (card_1.element.includes(priorityElement) && !card_2.element.includes(priorityElement)) {
+            priorityElementIndex = card_1.idx;
+        } else if (card_2.element.includes(priorityElement) && !card_1.element.includes(priorityElement)) {
+            priorityElementIndex = card_2.idx;
+
+        // if both cards are light, grab the lowest gen
+        } else {
+
+            if (card_1.gen < card_2.gen) {
+                priorityElementIndex = card_1.idx;
+            } else if (card_1.gen > card_2.gen) {
+                priorityElementIndex = card_2.idx;
+            } else {
+
+                // if both are completely equal, default to 2
+                priorityElementIndex = card_2.idx;
+            }
+        }
+
+        return priorityElementIndex;
+    }
+
+    /**
+     * check cards if they have the priority element, and set their grabs
+     */
+    function setGrabsByElement(): void {
+        let priorityElementIndex: number = 0; // default highest idx
+        let card_1 = cards[0];
+        let card_2 = cards[1];
+        let card_3 = cards[2];
+
+        // compare cards 1 and 2, and then 3
+        if (card_1.grab == false && card_2.grab == false) {
+            console.log(`card 1 element: ${card_1.element}`);
+            console.log(`card 2 element: ${card_2.element}`);
+
+            priorityElementIndex = getPriorityElementIdx(card_1, card_2);
+
+        // compare cards 1 and 3, and then 2
+        } else if (card_1.grab == false && card_3.grab == false) {
+            console.log(`card 1 element: ${card_1.element}`);
+            console.log(`card 3 element: ${card_3.element}`);
+
+        // compare cards 2 and 3, and then 1
+        } else if (card_2.grab == false && card_3.grab == false) {
+            console.log(`card 2 element: ${card_2.element}`);
+            console.log(`card 3 element: ${card_3.element}`);
+
+        }
+
+
+
     }
 
     // selector for all messages
