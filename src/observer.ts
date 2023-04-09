@@ -585,13 +585,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         }
 
-        // delete?
-        for (let i = 0; i < cards.length; i++) {
-            if (cards[i].grab == true) {
-                console.log("grabbing: " + cards[i].name);
-            }
-        }
-
         // make sure nonce is the same for all picks **
         if (cards[0].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 0);
@@ -609,21 +602,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // set subsequent request for multiple grabs
             subRequest = true;
 
-            console.log("finishing up...");
-            //await sleep(timer._m_cmdCd * 2);
+            // TODO:
+            // first timer doesnt have *2 like the following awaits?
             await sleep(timer._m_cmdCd);
-            console.log(`${cards[0].name} picked!`);
         }
-
-        //console.log("delay for card 0");
-        //await sleep(timer._m_cmdCd * 2);
-        //console.log("end delay for card 0");
 
         if (cards[1].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 1);
 
-            console.log(`fetching card ${cards[1].name}...`);
-
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -637,21 +623,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // set subsequent request for multiple grabs
             subRequest = true;
 
-            console.log("finishing up...");
-            //await sleep(timer._m_cmdCd * 2);
             await sleep(timer._m_cmdCd * 2);
-            console.log(`${cards[1].name} picked!`);
         }
-
-        //console.log("delay for card 1");
-        //await sleep(timer._m_cmdCd * 2);
-        //console.log("end delay for card 1");
 
         if (cards[2].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 2);
 
-            console.log(`fetching card ${cards[2].name}...`);
-
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -665,11 +642,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // set subsequent request for multiple grabs
             subRequest = true;
 
-            console.log("finishing up...");
-            //await sleep(timer._m_cmdCd * 2);
             await sleep(timer._m_cmdCd * 2);
-            console.log(`${cards[2].name} picked!`);
-
         }
 
         // if all cards are false, grab a random one
@@ -689,16 +662,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             });
         }
 
-        //console.log("delay for card 2");
-        //await sleep(timer._m_cmdCd * 2);
-        //console.log("end delay for card 2");
-
-        // TODO: check if the cards can stil be picked up by this time?
-
-        // finally, reset the card index and empty the current card array
-        // reset subsequent requests
-        console.log("only happens once! reset index");
-        console.log("empty card array");
+        // finally, reset the card index, empty the current card array, and reset subsequent requests
         cardIndex = 0;
         cards.length = 0;
         eventCardExists = false;
