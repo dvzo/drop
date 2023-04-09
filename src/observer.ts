@@ -137,12 +137,22 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var priorityElement_3: string = CardElement.Wind.toString();
 
     /**
+     * sleep function
+     * */
+    function sleep(ms: number) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    /**
      * from helpers 
      * */
     function getIdAtIndex(element: string, index: number): string {
         return element.split("-")[index];
     }
 
+    /**
+     * from helpers
+     */
     function getRandomInt(max: number) {
         return Math.floor(Math.random() * max);
     }
@@ -322,26 +332,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         console.log(`--- CARD ${card.idx} INFO ---`);
+        console.log("element:" + card.element);
         console.log("gen: " + card.gen);
         console.log("name: " + card.name);
         console.log("series: " + card.series);
-        console.log("element:" + card.element);
         console.log(`------`);
 
         return card;
     }
 
     /**
-     * sleep function
-     * */
-    function sleep(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
-    /**
      * get element of a card given its index and collection
      */
-    //function getCardElement(gridCards: HTMLCollection, cardIndex: number) {
     function getCardElement(gridCards: HTMLElement): string | null {
         let fieldName: ChildNode | null = gridCards.firstChild;
         let emojiContainer: ChildNode | null;
@@ -392,6 +394,72 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * return true if current drop has a card past the session wl threshold
+     * first criteria to check if an event is happening
+     */
+    function dropHasWLThresholdCard(): boolean {
+        let hasWLThresholdCard = false;
+
+        for (let i = 0; i < cards.length; i++) {
+
+            if (cards[i].wl >= session._wlThresh) {
+                hasWLThresholdCard = true;
+            }
+        }
+
+        return hasWLThresholdCard;
+    }
+
+    /**
+     * return true if current drop has a card past the wl minimum 
+     * first criteria to check when observing a drop
+     */
+    function dropHasWLMinimum(): boolean {
+        let hasWLMinimum = false;
+
+        for (let i = 0; i < cards.length; i++) {
+
+            if (cards[i].wl >= session._wlMin) {
+                hasWLMinimum = true;
+            }
+        }
+
+        return hasWLMinimum;
+    }
+
+    /**
+     * return true if current drop has a card with a given priority element
+     */
+    function dropHasPriorityElement(priorityElement: string): boolean {
+        let hasPriorityElement = false;
+
+        for (let i = 0; i < cards.length; i++) {
+
+            if (cards[i].element.includes(priorityElement)) {
+                hasPriorityElement = true;
+            }
+        }
+
+        return hasPriorityElement;
+    }
+
+    /**
+     * return true if current drop has a low gen card
+     */
+    function dropHasLowGenCard(): boolean {
+        let hasLowGenCard = false;
+
+        for (let i = 0; i < cards.length; i++) {
+
+            if (cards[i].gen <= session._lowGen) {
+                hasLowGenCard = true;
+            }
+        }
+
+        return hasLowGenCard;
+    }
+
+    /**
      * set card stats in sequential order
      * cant use for loops here as it breaks the async calls
      */
@@ -405,18 +473,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // sleep once the cards have been dropped/appeared
         await sleep(timer._m_cmdCd);
 
-        /** first card, get description and element */
+        // first card, get description and element
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
-
         card = createCard(cardDescription, cardElement, cardIndex);
         cards.push(card);
 
-        // TODO: use debug variable here too in the future
-
-        // TODO: move awaits inside of if statements here as well?
-
-        // only send scl command to check unfavorable cards
+        // only send scl command to check non-event cards
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
@@ -431,24 +494,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             });
         }
 
-        console.log(cards[cardIndex]);
-
-        console.log(`card created!, sleeping loop ${cardIndex}...`);
+        // cooldown before the next scl command
         await sleep(timer._m_cmdCd);
-        console.log(`loop ${cardIndex}: pass`);
 
         // always update global index
         cardIndex++;
 
-        /** second card, get description and element */
+        // second card, get description and element
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
-
         card = createCard(cardDescription, cardElement, cardIndex);
         cards.push(card);
 
-        // TODO: use debug variable here too in the future
-        // only send scl command to check unfavorable cards
+        // only send scl command to check non-event cards
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
@@ -463,24 +521,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             });
         }
 
-        console.log(cards[cardIndex]);
-
-        console.log(`message sent, sleeping loop ${cardIndex}...`);
+        // cooldown before next scl command
         await sleep(timer._m_cmdCd);
-        console.log(`loop ${cardIndex}: pass`);
 
         // always update global index
         cardIndex++;
 
-        /** third card, get description and element */
+        // third card, get description and element
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
-
         card = createCard(cardDescription, cardElement, cardIndex);
         cards.push(card);
 
-        // TODO: use debug variable here too in the future
-        // only send scl command to check unfavorable cards
+        // only send scl command to check non-event cards
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
@@ -495,71 +548,53 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             });
         }
 
-        console.log(cards[cardIndex]);
-
-        console.log(`message sent, sleeping loop ${cardIndex}...`);
+        // final cooldown before sending the request to grab a card
         await sleep(timer._m_cmdCd);
-        console.log(`loop ${cardIndex}: pass`);
 
-// TESTING
-        /** set which cards to grab here, after WL are all populated */
-        if (cards[0].wl >= session._wlMin || cards[1].wl >= session._wlMin
-            || cards[2].wl >= session._wlMin) {
+        // prioritize event cards
+        if (eventCardExists) {
 
+            // only grab an extra card during an event if a card has a wl >= the wl threshold
+            if (dropHasWLThresholdCard()) {
+                setGrabsByWL();
+            }
+
+            // check if drops are above the wl minumum
+        } else if (dropHasWLMinimum()) {
             setGrabsByWL();
 
-            // check first priority element
-        } else if (cards[0].element.includes(priorityElement_1)
-            || cards[1].element.includes(priorityElement_1)
-            || cards[2].element.includes(priorityElement_1)) {
-
+            // check if drops have the first priority element
+        } else if (dropHasPriorityElement(priorityElement_1)) {
             setGrabsByElement(priorityElement_1);
 
-            // next, prioritize low gens
-        } else if (cards[0].gen <= session._lowGen || cards[1].gen <= session._lowGen
-            || cards[2].gen <= session._lowGen) {
-
+            // next, check if drops have low gens
+        } else if (dropHasLowGenCard()) {
             setGrabsByGen();
 
-            // next, prioritize next priority element
-        } else if (cards[0].element.includes(priorityElement_2)
-            || cards[1].element.includes(priorityElement_2)
-            || cards[2].element.includes(priorityElement_2)) {
-
+            // next, check if drops have the second priority element
+        } else if (dropHasPriorityElement(priorityElement_2)) {
             setGrabsByElement(priorityElement_2);
 
-            // finally, prioritize last priority element
-        } else if (cards[0].element.includes(priorityElement_3)
-            || cards[1].element.includes(priorityElement_3)
-            || cards[2].element.includes(priorityElement_3)) {
-
+            // next, check if drops have the third priority element
+        } else if (dropHasPriorityElement(priorityElement_3)) {
             setGrabsByElement(priorityElement_3);
 
-            // else, get the lowest gen available
+            // finally, get the lowest gen available
         } else {
-
             setGrabsByGen();
+
         }
 
-        // TODO: if no other priority, grab the lowest gen?
-
-        /** after WL are all populated... */
-        // setGrabsByWL();
-
+        // delete?
         for (let i = 0; i < cards.length; i++) {
             if (cards[i].grab == true) {
                 console.log("grabbing: " + cards[i].name);
             }
         }
 
-        // TESTING:
-        // move sleep timers only fetches?
-
         // make sure nonce is the same for all picks **
         if (cards[0].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 0);
-
-            console.log(`fetching card ${cards[0].name}...`);
 
             await fetch(session._requestUrl, {
                 "headers": session._header,
@@ -910,6 +945,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("priority card element: " + cards[priorityElementIndex].element);
 
         cards[priorityElementIndex].grab = true;
+
+        // reset favorable card if an event card was chosen and threshold not met
+        if (eventCardExists && cards[highestCardIdx].wl < session._wlThresh) {
+            cards[highestCardIdx].grab = false;
+        }
     }
 
     /**
