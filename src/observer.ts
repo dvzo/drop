@@ -513,11 +513,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             setGrabsByWL();
 
-        } else if (cards[0].element.includes(priorityElement)
-            || cards[1].element.includes(priorityElement)
-            || cards[2].element.includes(priorityElement)) {
+        // check first priority element
+        } else if (cards[0].element.includes(priorityElement_1)
+            || cards[1].element.includes(priorityElement_1)
+            || cards[2].element.includes(priorityElement_1)) {
 
-            setGrabsByElement();
+            setGrabsByElement(priorityElement_1);
+        } else if () {
 
         }
 
@@ -717,8 +719,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         if (card_1.gen < card_2.gen) {
             lowestGenIdx = card_1.idx;
+
         } else if (card_1.gen > card_2.gen) {
             lowestGenIdx = card_2.idx;
+
         } else {
 
             // if both are completely equal, default to 2
@@ -741,16 +745,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // if tied wishlist, get lowest gen
         } else {
-
-            if (card_1.gen < card_2.gen) {
-                highestCardIdx = card_1.idx;
-            } else if (card_1.gen > card_2.gen) {
-                highestCardIdx = card_2.idx;
-            } else {
-
-                // if both are completely equal, default to 2
-                highestCardIdx = card_2.idx;
-            }
+            highestCardIdx = getLowestGenIdx(card_1, card_2);
         }
 
         return highestCardIdx;
@@ -829,18 +824,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         } else if (card_2.element.includes(priorityElement) && !card_1.element.includes(priorityElement)) {
             priorityElementIndex = card_2.idx;
 
-        // if both cards are light, grab the lowest gen
+        // if both cards are of priority, grab the lowest gen
         } else {
-
-            if (card_1.gen < card_2.gen) {
-                priorityElementIndex = card_1.idx;
-            } else if (card_1.gen > card_2.gen) {
-                priorityElementIndex = card_2.idx;
-            } else {
-
-                // if both are completely equal, default to 2
-                priorityElementIndex = card_2.idx;
-            }
+            priorityElementIndex = getLowestGenIdx(card_1, card_2);
         }
 
         return priorityElementIndex;
@@ -849,7 +835,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * check cards if they have the priority element, and set their grabs
      */
-    function setGrabsByElement(): void {
+    function setGrabsByElement(priorityElement: string): void {
         let priorityElementIndex: number = 0; // default highest idx
         let card_1 = cards[0];
         let card_2 = cards[1];
@@ -860,22 +846,48 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             console.log(`card 1 element: ${card_1.element}`);
             console.log(`card 2 element: ${card_2.element}`);
 
-            priorityElementIndex = getPriorityElementIdx(card_1, card_2);
+            priorityElementIndex = getPriorityElementIdx(card_1, card_2, priorityElement);
+
+            if (card_3.grab == false) {
+                console.log(`card ${priorityElementIndex + 1} element: ${cards[priorityElementIndex].element}`);
+                console.log(`card 3 element: ${card_3.element}`);
+
+                priorityElementIndex = getPriorityElementIdx(cards[priorityElementIndex], card_3, priorityElement);
+            }
 
         // compare cards 1 and 3, and then 2
         } else if (card_1.grab == false && card_3.grab == false) {
             console.log(`card 1 element: ${card_1.element}`);
             console.log(`card 3 element: ${card_3.element}`);
 
+            priorityElementIndex = getPriorityElementIdx(card_1, card_3, priorityElement);
+
+            if (card_2.grab == false) {
+                console.log(`card ${priorityElementIndex + 1} element: ${cards[priorityElementIndex].element}`);
+                console.log(`card 2 element: ${card_2.element}`);
+
+                priorityElementIndex = getPriorityElementIdx(cards[priorityElementIndex], card_2, priorityElement);
+            }
+
         // compare cards 2 and 3, and then 1
         } else if (card_2.grab == false && card_3.grab == false) {
             console.log(`card 2 element: ${card_2.element}`);
             console.log(`card 3 element: ${card_3.element}`);
 
+            priorityElementIndex = getPriorityElementIdx(card_2, card_3, priorityElement);
+
+            if (card_1.grab == false) {
+                console.log(`card ${priorityElementIndex + 1} element: ${cards[priorityElementIndex].element}`);
+                console.log(`card 1 element: ${card_1.element}`);
+
+                priorityElementIndex = getPriorityElementIdx(cards[priorityElementIndex], card_1, priorityElement);
+            }
         }
 
+        console.log("priority card name: " + cards[priorityElementIndex].name);
+        console.log("priority card element: " + cards[priorityElementIndex].element);
 
-
+        cards[priorityElementIndex].grab = true;
     }
 
     // selector for all messages

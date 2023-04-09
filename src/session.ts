@@ -13,6 +13,7 @@ export class Session {
     _guild!: Guild;
     _channel!: Channel;
     _wlThresh!: number;
+    _wlMin!: number;
 
     get os(): OS {
         return this._os;
@@ -84,5 +85,13 @@ export class Session {
 
     set wlThresh(wlThresh: number) {
         this._wlThresh = wlThresh;
+    }
+
+    get wlMin(): number {
+        return this._wlMin;
+    }
+
+    set wlMin(wlMin: number) {
+        this._wlMin = wlMin;
     }
 }
