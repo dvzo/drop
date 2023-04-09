@@ -569,15 +569,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             console.log("- drop has wl minimum...");
             setGrabsByWL();
 
-            // check if drops have the first priority element
-        } else if (dropHasPriorityElement(priorityElement_1)) {
-            console.log(`- drop has priority element 1: ${priorityElement_1}`);
-            setGrabsByElement(priorityElement_1);
-
             // next, check if drops have low gens
         } else if (dropHasLowGenCard()) {
             console.log("- drop has low gen card...");
             setGrabsByGen();
+
+            // check if drops have the first priority element
+        } else if (dropHasPriorityElement(priorityElement_1)) {
+            console.log(`- drop has priority element 1: ${priorityElement_1}`);
+            setGrabsByElement(priorityElement_1);
 
             // next, check if drops have the second priority element
         } else if (dropHasPriorityElement(priorityElement_2)) {
