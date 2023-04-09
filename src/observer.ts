@@ -508,33 +508,40 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             setGrabsByWL();
 
-        // check first priority element
+            // check first priority element
         } else if (cards[0].element.includes(priorityElement_1)
             || cards[1].element.includes(priorityElement_1)
             || cards[2].element.includes(priorityElement_1)) {
 
             setGrabsByElement(priorityElement_1);
 
-        // next, prioritize low gens
+            // next, prioritize low gens
         } else if (cards[0].gen <= session._lowGen || cards[1].gen <= session._lowGen
             || cards[2].gen <= session._lowGen) {
 
             setGrabsByGen();
 
-        // next, prioritize next priority element
+            // next, prioritize next priority element
         } else if (cards[0].element.includes(priorityElement_2)
             || cards[1].element.includes(priorityElement_2)
             || cards[2].element.includes(priorityElement_2)) {
 
             setGrabsByElement(priorityElement_2);
 
-        // finally, prioritize last priority element
+            // finally, prioritize last priority element
         } else if (cards[0].element.includes(priorityElement_3)
             || cards[1].element.includes(priorityElement_3)
             || cards[2].element.includes(priorityElement_3)) {
 
             setGrabsByElement(priorityElement_3);
+
+            // else, get the lowest gen available
+        } else {
+
+            setGrabsByGen();
         }
+
+        // TODO: if no other priority, grab the lowest gen?
 
         /** after WL are all populated... */
         // setGrabsByWL();
@@ -633,6 +640,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // if all cards are false, grab a random one
         if (cards[0].grab == false && cards[1].grab == false && cards[2].grab == false) {
             let body = getBody(msgAccessoriesId, dataCustomId);
+
+            console.log("-- all cases were false! grabbing random card! --")
 
             await fetch(session._requestUrl, {
                 "headers": session._header,
