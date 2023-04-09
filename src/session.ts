@@ -14,6 +14,7 @@ export class Session {
     _channel!: Channel;
     _wlThresh!: number;
     _wlMin!: number;
+    _lowGen!: number;
 
     get os(): OS {
         return this._os;
@@ -93,5 +94,13 @@ export class Session {
 
     set wlMin(wlMin: number) {
         this._wlMin = wlMin;
+    }
+
+    get lowGen(): number {
+        return this._lowGen;
+    }
+
+    set lowGen(lowGen: number) {
+        this._lowGen = lowGen;
     }
 }

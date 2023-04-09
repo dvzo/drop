@@ -4,7 +4,7 @@ import * as puppeteer from 'puppeteer';
 import { loadScreen, debugMessage, optionSelect, channelSelect, getLaunchOptions, echo } from './helper';
 import { Session } from './session';
 import { Timer } from './timer';
-import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, WL_THRESH, WL_MIN, TIMEOUT_MULT } from './declare/constants';
+import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, WL_THRESH, WL_MIN, TIMEOUT_MULT, LOW_GEN } from './declare/constants';
 import { injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
@@ -49,6 +49,7 @@ import { msgSelector } from './declare/selectors';
     session.header = getHeader(session.user);
     session.wlThresh = WL_THRESH;
     session.wlMin = WL_MIN;
+    session.lowGen = LOW_GEN;
 
     // adjust timers for OS
     if (session._os.id === 0) {
