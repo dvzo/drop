@@ -132,7 +132,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
     var eventCardExists: boolean = false; // check if event card exists
-    var wlMinimum: number = 25; // minimum wishlist number to grab
     var priorityElement_1: string = CardElement.Light.toString(); // prioritize elements if cards do not meet wl minimum
     var priorityElement_2: string = CardElement.Fire.toString();
     var priorityElement_3: string = CardElement.Wind.toString();
