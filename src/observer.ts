@@ -51,7 +51,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         private _name!: string;
         private _series!: string;
         private _grab: boolean = false; // false by default
-        private _element!: string;
+        private _element!: string | null;
 
         public get idx(): number {
             return this._idx;
@@ -101,11 +101,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             this._grab = grab;
         }
 
-        public get element(): string {
+        public get element(): string | null {
             return this._element;
         }
 
-        public set element(element: string) {
+        public set element(element: string | null) {
             this._element = element;
         }
     }
@@ -267,7 +267,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * return a card with gen, name, and series populated
      * */
-    function createCard(cardDescription: string, idx: number): Card {
+    function createCard(cardDescription: string, cardElement: string | null, idx: number): Card {
         let card = new Card();
         let descriptionRaw = cardDescription.split('\n');
         let description = descriptionRaw.filter(desc => desc != "");
@@ -307,6 +307,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         card.name = description[1];
         card.series = description[2];
 
+        card.element = cardElement;
+
         // clip appended '-' for name and series if they were shortened
         if (card.name[card.name.length - 1] == '-') {
             card.name = card.name.slice(0, -1);
@@ -316,10 +318,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             card.series = card.series.slice(0, -1);
         }
 
-        console.log("idx: " + card.idx);
+        console.log(`--- CARD ${card.idx} INFO ---`);
         console.log("gen: " + card.gen);
         console.log("name: " + card.name);
         console.log("series: " + card.series);
+        console.log("element:" + card.element);
+        console.log(`------`);
 
         return card;
     }
@@ -402,7 +406,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
 
-        card = createCard(cardDescription, cardIndex);
+        card = createCard(cardDescription, cardElement, cardIndex);
         cards.push(card);
 
         // TODO: use debug variable here too in the future
@@ -437,7 +441,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
 
-        card = createCard(cardDescription, cardIndex);
+        card = createCard(cardDescription, cardElement, cardIndex);
         cards.push(card);
 
         // TODO: use debug variable here too in the future
@@ -469,7 +473,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
         cardElement = getCardElement(gridCards[cardIndex] as HTMLElement);
 
-        card = createCard(cardDescription, cardIndex);
+        card = createCard(cardDescription, cardElement, cardIndex);
         cards.push(card);
 
         // TODO: use debug variable here too in the future
