@@ -126,6 +126,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         Earth = "earth",
         Fire = "fire",
         Ice = "ice",
+        Light = "light",
         Metal = "metal",
         Void = "void",
         Wind = "wind",
@@ -359,6 +360,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                         } else if (cardElement.includes(CardElement.Ice)) {
                             return CardElement.Ice.toString();
+
+                        } else if (cardElement.includes(CardElement.Light)) {
+                            return CardElement.Light.toString();
 
                         } else if (cardElement.includes(CardElement.Metal)) {
                             return CardElement.Metal.toString();
