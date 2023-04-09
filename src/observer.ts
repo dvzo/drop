@@ -918,11 +918,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("priority card element: " + cards[priorityElementIndex].element);
 
         cards[priorityElementIndex].grab = true;
-
-        // reset favorable card if an event card was chosen and threshold not met
-        if (eventCardExists && cards[highestCardIdx].wl < session._wlThresh) {
-            cards[highestCardIdx].grab = false;
-        }
     }
 
     /**
