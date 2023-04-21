@@ -1056,6 +1056,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 console.log("authorName: " + authorName);
                 console.log("msgContent: " + msgContent);
 
+                // TODO: if command is typed, disconnect the observer? :O
+                /*
+                if (authorName?.toLowerCase().includes("zoo") && msgContent?.toLowerCase().includes("dns")) {
+                    observer.disconnect();
+
+                    // TODO: return value from page.evaluate?
+                } */
+
                 if (dataCustomId && authorName && msgContent) {
 
                     // if any drop command is executed

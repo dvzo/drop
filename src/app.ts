@@ -39,6 +39,18 @@ import { msgSelector } from './declare/selectors';
     let guild = await optionSelect(G_LIST, "guild");
     let channel = await channelSelect(guild);
 
+    // TODO:
+    // find a way to get authorization header
+
+    // TODO:
+    // send a request to api/v9/experiements to get new properties for every request
+    // user agent, x-super-properties, authorization
+    // use/create a superproperties object from dev links
+    // create/update superpropeties object with needed headers
+    // update this in the session object to be used for each request
+
+    // window.navigator.userAgent
+
     session.os = os;
     session.user = user;
     session.guild = guild;
