@@ -2,6 +2,15 @@ import { Page } from 'puppeteer';
 import { Session } from './session';
 import { Timer } from './timer';
 
+/**
+ * 
+ * @returns window Navigator object that contains client information
+ */
+export var getWindowNavigator = function() {
+
+    return window.navigator;
+}
+
 /** 
  * mutation observer
  * need nested functions since injectMutator does not have a scope

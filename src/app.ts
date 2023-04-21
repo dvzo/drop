@@ -5,7 +5,7 @@ import { loadScreen, debugMessage, optionSelect, channelSelect, getLaunchOptions
 import { Session } from './session';
 import { Timer } from './timer';
 import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, WL_THRESH, WL_MIN, TIMEOUT_MULT, LOW_GEN } from './declare/constants';
-import { injectMutator } from './observer';
+import { getWindowNavigator, injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
 import { msgSelector } from './declare/selectors';
@@ -89,6 +89,12 @@ import { msgSelector } from './declare/selectors';
 
     await grandLine(page, timer);
 
+    // TODO: another page evaluate to user window.navigator?
+    // initial window.navigator
+    let clientInfo = await page.evaluate(getWindowNavigator);
+
+    console.log(clientInfo);
+
     // inject mutator
     await page.evaluate(injectMutator, DEBUG, APP_ID, session, timer, msgSelector.messages)
         .then(() => echo("stealing treasure!"));
@@ -99,6 +105,9 @@ import { msgSelector } from './declare/selectors';
         let treasure = 0;
 
         var interval = setInterval(() => {
+            // TODO: another page evaluate to user window.navigator?
+            // after every request, get newest properties?
+
             sendMsg(session, "sdn").then(() => echo(`grabbing treasure #${treasure}`));
             treasure++;
         }, SEND_INTERVAL);

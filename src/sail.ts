@@ -79,5 +79,4 @@ export async function grandLine(page: Page, timer: Timer) {
     await page.waitForSelector(msgSelector.slate, { timeout: 0 })
         .then(() => echo("reached the grand line!"),
             () => { throw new Error("unable to reach the grand line! :("); });
-
 }
