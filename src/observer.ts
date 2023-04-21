@@ -336,6 +336,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("gen: " + card.gen);
         console.log("name: " + card.name);
         console.log("series: " + card.series);
+        console.log("card idx: " + card.idx);
         console.log(`------`);
 
         return card;
