@@ -60,7 +60,6 @@ import { SuperProperties } from './superProperties';
     session.requestUrl = REQUEST_URL;
     session.referUrl = getReferUrl(session.guild, session.channel);
     session.msgUrl = getMsgUrl(channel);
-    session.header = getHeader(session.user);
     session.wlThresh = WL_THRESH;
     session.wlMin = WL_MIN;
     session.lowGen = LOW_GEN;
@@ -95,8 +94,17 @@ import { SuperProperties } from './superProperties';
     superProperties.browser_user_agent = await page.evaluate(getUserAgent);
     superProperties.browser_version = await page.evaluate(getChromeVersion);
 
+    // TODO: testing
+    console.log(superProperties);
+
+    // set headers with updated superProperties
+    session.header = getHeader(session.user, superProperties);
+
+    // TODO: testing
+    console.log(session.header);
+
     // inject mutator
-    await page.evaluate(injectMutator, DEBUG, APP_ID, session, timer, msgSelector.messages)
+    await page.evaluate(injectMutator, DEBUG, APP_ID, session, superProperties, timer, msgSelector.messages)
         .then(() => echo("stealing treasure!"));
 
     // sending initial message
@@ -104,9 +112,11 @@ import { SuperProperties } from './superProperties';
         await sendMsg(session, "sdn");
         let treasure = 0;
 
-        var interval = setInterval(() => {
-            // TODO: another page evaluate to user window.navigator?
-            // after every request, get newest properties?
+        var interval = setInterval(async() => {
+            // update super properties for the session object, before every request
+            superProperties.browser_user_agent = await page.evaluate(getUserAgent);
+            superProperties.browser_version = await page.evaluate(getChromeVersion);
+            session.header = getHeader(session.user, superProperties);
 
             sendMsg(session, "sdn").then(() => echo(`grabbing treasure #${treasure}`));
             treasure++;

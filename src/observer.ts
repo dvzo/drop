@@ -1,6 +1,8 @@
 import { Page } from 'puppeteer';
 import { Session } from './session';
 import { Timer } from './timer';
+// import { generateSuperProperties, getHeader } from './declare/constants';
+import { SuperProperties } from './superProperties';
 
 /**
  * 
@@ -32,7 +34,8 @@ export var getChromeVersion = (): string => {
  * mutation observer
  * need nested functions since injectMutator does not have a scope
  * */
-export var injectMutator = function (debug: boolean, appId: string, session: Session, timer: Timer, msgSelector: string) {
+export var injectMutator = function (debug: boolean, appId: string, session: Session, 
+    superProperties: SuperProperties, timer: Timer, msgSelector: string) {
 
     /**
      * cooldown class to control cooldowns between each request
@@ -268,6 +271,45 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         return JSON.stringify(bodyObj);
     }
+
+    /**
+     * // TODO: trying local versions of getUserAgent 
+     * @returns userAgent as a string that can be returned back to the node context
+     */
+    const _getUserAgent = (): string => {
+
+        return JSON.stringify(window.navigator.userAgent);
+    }
+
+    /**
+     * // TODO: trying local version of getChromeVersion
+     * @returns chrome version string that can be used in the node context
+     */
+    const _getChromeVersion = (): string => {
+        // ex chrome/115.0.0.0.0
+        let rawChromeUserAgent = navigator.userAgent.match(/Chrom(e|ium)\/\d.*\ /);
+        let chromeUserAgent = rawChromeUserAgent ? rawChromeUserAgent[0] : null;
+        let chromeVersion = "";
+
+        if (chromeUserAgent) {
+            chromeVersion = chromeUserAgent.split("/")[1].trim();
+        }
+
+        return chromeVersion;
+    } 
+
+    /**
+     * // TODO: trying local generate super version
+     * @param spo SuperProperties object
+     * @returns {string} superproperties encoded as a base64 string using node.js api
+     */
+    const _generateSuperProperties = (spo: SuperProperties): string => {
+        let spString = JSON.stringify(spo);
+        let spStringEncoded = btoa(spString);
+
+        return spStringEncoded;
+    };
+
 
     /**
      * get the title of the embed grid element
@@ -510,6 +552,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
+            console.log(superProperties);
+
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO: need to find bug..
+            console.log("--- DEBUGGER HERE ---");
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
+
             await fetch(session._msgUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -537,6 +593,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
 
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO:
+            // "headers": getHeader(session._user, superProperties),
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
+
             await fetch(session._msgUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -563,6 +631,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // only send scl command to check non-event cards
         if (cards[cardIndex].grab == false) {
             msgBody = getMsgBody(`scl ${card.name}`); // send scl
+
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO:
+            // "headers": getHeader(session._user, superProperties),
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
 
             await fetch(session._msgUrl, {
                 "headers": session._header,
@@ -627,6 +707,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (cards[0].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 0);
 
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO:
+            // "headers": getHeader(session._user, superProperties),
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
+
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -648,6 +740,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (cards[1].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 1);
 
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO:
+            // "headers": getHeader(session._user, superProperties),
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
+
             await fetch(session._requestUrl, {
                 "headers": session._header,
                 "referrer": session._referUrl,
@@ -666,6 +770,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         if (cards[2].grab == true) {
             let body = getSingleBody(msgAccessoriesId, dataCustomId, nonce, 2);
+
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO:
+            // "headers": getHeader(session._user, superProperties),
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
 
             await fetch(session._requestUrl, {
                 "headers": session._header,
@@ -688,6 +804,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             let body = getBody(msgAccessoriesId, dataCustomId);
 
             console.log("-- all cases were false! grabbing random card! --")
+
+            superProperties.browser_user_agent = _getUserAgent();
+            superProperties.browser_version = _getChromeVersion();
+            console.log(superProperties);
+
+            // TODO:
+            // "headers": getHeader(session._user, superProperties),
+
+            // TODO:
+            session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+            console.log(session._header);
 
             await fetch(session._requestUrl, {
                 "headers": session._header,
@@ -1138,6 +1266,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         console.log("unable to pick up cards, still on cooldown!");
 
                                     } else {
+
+                                        superProperties.browser_user_agent = _getUserAgent();
+                                        superProperties.browser_version = _getChromeVersion();
+                                        console.log(superProperties);
+
+                                        // TODO:
+                                        // "headers": getHeader(session._user, superProperties),
+
+                                        // TODO:
+                                        session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+                                        console.log(session._header);
+
                                         fetch(session._requestUrl, {
                                             "headers": session._header,
                                             "referrer": session._referUrl,

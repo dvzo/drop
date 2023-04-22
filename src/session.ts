@@ -7,7 +7,8 @@ export class Session {
     _requestUrl!: string;
     _referUrl!: string;
     _msgUrl!: string;
-    _header!: HeadersInit;
+    // _header!: HeadersInit; // TODO: trying object
+    _header!: any;
     _os!: OS;
     _user!: User;
     _guild!: Guild;
@@ -72,11 +73,20 @@ export class Session {
         this._msgUrl = newMsgUrl;
     }
 
-    get header(): HeadersInit {
+    // get header(): HeadersInit {
+    //     return this._header;
+    // }
+
+    // set header(newHeader: HeadersInit) {
+    //     this._header = newHeader;
+    // }
+
+    // TODO: trying object
+    get header(): any {
         return this._header;
     }
 
-    set header(newHeader: HeadersInit) {
+    set header(newHeader: any) {
         this._header = newHeader;
     }
 
