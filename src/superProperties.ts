@@ -5,8 +5,8 @@ export class SuperProperties {
     _browser: string = SUPER_PROPERTIES._browser;
     _device: string = SUPER_PROPERTIES._device;
     _system_locale: string = SUPER_PROPERTIES._system_locale;
-    _browser_user_agent: string = ""; // TODO: needs to be populated
-    _browser_version: string = ""; // TODO: needs to be populated
+    _browser_user_agent: string = SUPER_PROPERTIES._browser_user_agent; // userAgent will always be refreshed before every request
+    _browser_version: string = SUPER_PROPERTIES._broswer_version; // browserVersion will always be refreshed before every request
     _os_version: string = SUPER_PROPERTIES._os_version;
     _referrer: string = SUPER_PROPERTIES._referrer;
     _referring_domain: string = SUPER_PROPERTIES._referring_domain;

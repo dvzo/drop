@@ -4,12 +4,29 @@ import { Timer } from './timer';
 
 /**
  * 
- * @returns window Navigator object that contains client information
+ * @returns userAgent as a string that can be returned back to the node context
  */
-export var getWindowNavigator = function() {
+export var getUserAgent = (): string => {
 
-    return window.navigator;
+    return JSON.stringify(window.navigator.userAgent);
 }
+
+/**
+ * 
+ * @returns chrome version string that can be used in the node context
+ */
+export var getChromeVersion = (): string => {
+    // ex chrome/115.0.0.0.0
+    let rawChromeUserAgent = navigator.userAgent.match(/Chrom(e|ium)\/\d.*\ /);
+    let chromeUserAgent = rawChromeUserAgent ? rawChromeUserAgent[0] : null;
+    let chromeVersion = "";
+
+    if (chromeUserAgent) {
+        chromeVersion = chromeUserAgent.split("/")[1].trim();
+    }
+
+    return chromeVersion;
+} 
 
 /** 
  * mutation observer

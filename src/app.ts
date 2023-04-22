@@ -5,10 +5,11 @@ import { loadScreen, debugMessage, optionSelect, channelSelect, getLaunchOptions
 import { Session } from './session';
 import { Timer } from './timer';
 import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, WL_THRESH, WL_MIN, TIMEOUT_MULT, LOW_GEN } from './declare/constants';
-import { getWindowNavigator, injectMutator } from './observer';
+import { getUserAgent, getChromeVersion, injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
 import { msgSelector } from './declare/selectors';
+import { SuperProperties } from './superProperties';
 
 
 /**
@@ -23,6 +24,7 @@ import { msgSelector } from './declare/selectors';
 
     // create session object
     let session = new Session();
+    let superProperties = new SuperProperties();
 
     // create timer object
     let timer = new Timer();
@@ -89,11 +91,9 @@ import { msgSelector } from './declare/selectors';
 
     await grandLine(page, timer);
 
-    // TODO: another page evaluate to user window.navigator?
-    // initial window.navigator
-    let clientInfo = await page.evaluate(getWindowNavigator);
-
-    console.log(clientInfo);
+    // after final page has been reached, get new browser info before every request
+    superProperties.browser_user_agent = await page.evaluate(getUserAgent);
+    superProperties.browser_version = await page.evaluate(getChromeVersion);
 
     // inject mutator
     await page.evaluate(injectMutator, DEBUG, APP_ID, session, timer, msgSelector.messages)
