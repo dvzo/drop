@@ -1,7 +1,6 @@
 import { Page } from 'puppeteer';
 import { Session } from './session';
 import { Timer } from './timer';
-// import { generateSuperProperties, getHeader } from './declare/constants';
 import { SuperProperties } from './superProperties';
 
 /**
@@ -273,7 +272,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * // TODO: trying local versions of getUserAgent 
+     * local version of getUserAgent
      * @returns userAgent as a string that can be returned back to the node context
      */
     const _getUserAgent = (): string => {
@@ -282,7 +281,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * // TODO: trying local version of getChromeVersion
+     * local version of getChromeVersion
      * @returns chrome version string that can be used in the node context
      */
     const _getChromeVersion = (): string => {
@@ -299,7 +298,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     } 
 
     /**
-     * // TODO: trying local generate super version
+     * local version of generateSuperProperties
      * @param spo SuperProperties object
      * @returns {string} superproperties encoded as a base64 string using node.js api
      */
@@ -309,6 +308,37 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         return spStringEncoded;
     };
+
+    /**
+     * 
+     * @returns client build number that can be used in the page context
+     */
+    const _getClientBuildNumber = async (): Promise<number> =>  {
+        let userSettingsButton: HTMLElement = document.querySelector("button[aria-label*='User Settings']") as HTMLElement;
+        // let appInfo: HTMLElement = document.querySelector("div[class*='info'] > span:nth-child(1)") as HTMLElement;
+        // let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
+        let clientBuildNumber = 0;
+
+        if (userSettingsButton) {
+            userSettingsButton.click();
+
+            await new Promise(r => setTimeout(r, 10));
+
+            // after opening the user settings window, set the info variables
+            let appInfo: HTMLElement = document.querySelector("div[class*='info'] > span:nth-child(1)") as HTMLElement;
+            let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
+
+            if (appInfo && closeButton) {
+                clientBuildNumber = parseInt(appInfo.innerText.split(" ")[1]);
+                closeButton.click();
+            }
+        }
+
+        console.log(`client build number: ${clientBuildNumber}`);
+
+        return clientBuildNumber ? clientBuildNumber : 0;
+    }
+
 
 
     /**
@@ -539,6 +569,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let msgBody: string; // body changes for each request
         let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
 
+        // update client build number for super properties
+        superProperties.client_build_number = await _getClientBuildNumber();
+        console.log(`client build number: ${superProperties.client_build_number}`);
+
         // sleep once the cards have been dropped/appeared
         await sleep(timer._m_cmdCd);
 
@@ -558,10 +592,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO: need to find bug..
-            console.log("--- DEBUGGER HERE ---");
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -576,6 +606,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
         }
+
+        // update client build number for super properties
+        superProperties.client_build_number = await _getClientBuildNumber();
+        console.log(`client build number: ${superProperties.client_build_number}`);
 
         // cooldown before the next scl command
         await sleep(timer._m_cmdCd);
@@ -597,10 +631,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO:
-            // "headers": getHeader(session._user, superProperties),
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -615,6 +645,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
         }
+
+        // update client build number for super properties
+        superProperties.client_build_number = await _getClientBuildNumber();
+        console.log(`client build number: ${superProperties.client_build_number}`);
 
         // cooldown before next scl command
         await sleep(timer._m_cmdCd);
@@ -636,10 +670,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO:
-            // "headers": getHeader(session._user, superProperties),
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -654,6 +684,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
         }
+
+        // update client build number for super properties
+        superProperties.client_build_number = await _getClientBuildNumber();
+        console.log(`client build number: ${superProperties.client_build_number}`);
 
         // final cooldown before sending the request to grab a card
         await sleep(timer._m_cmdCd);
@@ -711,10 +745,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO:
-            // "headers": getHeader(session._user, superProperties),
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -744,10 +774,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO:
-            // "headers": getHeader(session._user, superProperties),
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -775,10 +801,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO:
-            // "headers": getHeader(session._user, superProperties),
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -809,10 +831,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             superProperties.browser_version = _getChromeVersion();
             console.log(superProperties);
 
-            // TODO:
-            // "headers": getHeader(session._user, superProperties),
-
-            // TODO:
             session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
             console.log(session._header);
@@ -1271,10 +1289,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                         superProperties.browser_version = _getChromeVersion();
                                         console.log(superProperties);
 
-                                        // TODO:
-                                        // "headers": getHeader(session._user, superProperties),
+                                        async () => {
+                                            superProperties.client_build_number = await _getClientBuildNumber();
+                                            console.log(`client build number: ${superProperties.client_build_number}`);
+                                        }
 
-                                        // TODO:
                                         session._header["x-super-properties"] = _generateSuperProperties(superProperties);
 
                                         console.log(session._header);

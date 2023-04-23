@@ -41,18 +41,6 @@ import { SuperProperties } from './superProperties';
     let guild = await optionSelect(G_LIST, "guild");
     let channel = await channelSelect(guild);
 
-    // TODO:
-    // find a way to get authorization header
-
-    // TODO:
-    // send a request to api/v9/experiements to get new properties for every request
-    // user agent, x-super-properties, authorization
-    // use/create a superproperties object from dev links
-    // create/update superpropeties object with needed headers
-    // update this in the session object to be used for each request
-
-    // window.navigator.userAgent
-
     session.os = os;
     session.user = user;
     session.guild = guild;
@@ -91,17 +79,12 @@ import { SuperProperties } from './superProperties';
     await grandLine(page, timer);
 
     // after final page has been reached, get new browser info before every request
+    // update super properties
     superProperties.browser_user_agent = await page.evaluate(getUserAgent);
     superProperties.browser_version = await page.evaluate(getChromeVersion);
 
-    // TODO: testing
-    console.log(superProperties);
-
     // set headers with updated superProperties
     session.header = getHeader(session.user, superProperties);
-
-    // TODO: testing
-    console.log(session.header);
 
     // inject mutator
     await page.evaluate(injectMutator, DEBUG, APP_ID, session, superProperties, timer, msgSelector.messages)
