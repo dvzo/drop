@@ -322,7 +322,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (userSettingsButton) {
             userSettingsButton.click();
 
-            await new Promise(r => setTimeout(r, 10));
+            await new Promise(r => setTimeout(r, 100));
 
             // after opening the user settings window, set the info variables
             let appInfo: HTMLElement = document.querySelector("div[class*='info'] > span:nth-child(1)") as HTMLElement;
@@ -330,6 +330,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             if (appInfo && closeButton) {
                 clientBuildNumber = parseInt(appInfo.innerText.split(" ")[1]);
+
+                console.log("clicking close button!! first");
                 closeButton.click();
             }
         }
@@ -570,11 +572,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
 
         // update client build number for super properties
+        // TODO: only check once for client build number? this will help with slower loading times
         superProperties.client_build_number = await _getClientBuildNumber();
         console.log(`client build number: ${superProperties.client_build_number}`);
 
         // sleep once the cards have been dropped/appeared
         await sleep(timer._m_cmdCd);
+
+        let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
+
+        // TODO: not sure why there has to be an extra close from getClientBuildNumber?
+        if (closeButton) {
+            console.log("clicking close button!! again");
+            closeButton.click();
+        }
 
         // first card, get description and element
         cardDescription = (gridCards[cardIndex] as HTMLElement).innerText;
@@ -608,8 +619,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         // update client build number for super properties
-        superProperties.client_build_number = await _getClientBuildNumber();
-        console.log(`client build number: ${superProperties.client_build_number}`);
+        // superProperties.client_build_number = await _getClientBuildNumber();
+        // console.log(`client build number: ${superProperties.client_build_number}`);
 
         // cooldown before the next scl command
         await sleep(timer._m_cmdCd);
@@ -647,8 +658,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         // update client build number for super properties
-        superProperties.client_build_number = await _getClientBuildNumber();
-        console.log(`client build number: ${superProperties.client_build_number}`);
+        // superProperties.client_build_number = await _getClientBuildNumber();
+        // console.log(`client build number: ${superProperties.client_build_number}`);
 
         // cooldown before next scl command
         await sleep(timer._m_cmdCd);
@@ -686,11 +697,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         // update client build number for super properties
-        superProperties.client_build_number = await _getClientBuildNumber();
-        console.log(`client build number: ${superProperties.client_build_number}`);
+        // superProperties.client_build_number = await _getClientBuildNumber();
+        // console.log(`client build number: ${superProperties.client_build_number}`);
 
+        // TODO: try without this cooldown?
         // final cooldown before sending the request to grab a card
-        await sleep(timer._m_cmdCd);
+        // await sleep(timer._m_cmdCd);
 
         // logging criteria
         console.log("--- CRITERIA DROPS ---")
@@ -764,7 +776,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             // TODO:
             // first timer doesnt have *2 like the following awaits?
-            await sleep(timer._m_cmdCd);
+
+            // TODO: testing no timers here, since it would just be a request sent?
+            // as if u clicked a button
+            // await sleep(timer._m_cmdCd);
         }
 
         if (cards[1].grab == true) {
@@ -791,7 +806,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // set subsequent request for multiple grabs
             subRequest = true;
 
-            await sleep(timer._m_cmdCd * 2);
+            // TODO: testing no timers here, since it would just be a request sent?
+            // as if u clicked a button
+            // await sleep(timer._m_cmdCd * 2);
         }
 
         if (cards[2].grab == true) {
@@ -818,7 +835,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // set subsequent request for multiple grabs
             subRequest = true;
 
-            await sleep(timer._m_cmdCd * 2);
+            // TODO: testing no timers here, since it would just be a request sent?
+            // as if u clicked a button
+            // await sleep(timer._m_cmdCd * 2);
         }
 
         // if all cards are false, grab a random one
