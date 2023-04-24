@@ -378,6 +378,16 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * returns the wl of a single character lookup within an embed grid
+     * for lookup descriptions
+     * */
+    function getEmbedSingleCharacterWLElement(embedGridSelector: string): HTMLElement | null {
+        let singleCharacterWLElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedDescription'] > code`);
+
+        return singleCharacterWLElement;
+    }
+
+    /**
      * return a card with gen, name, and series populated
      * */
     function createCard(cardDescription: string, cardElement: string | null, idx: number): Card {
@@ -867,6 +877,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // finally, reset the card index, empty the current card array, and reset subsequent requests
         cardIndex = 0;
+
+        // TODO: physically empty elements from array
+        // TODO: set all cards grabs to false?
         cards.length = 0;
         eventCardExists = false;
         subRequest = false;
@@ -875,10 +888,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /**
      * returns wl number from single lookup
      */
-    function getLookupWL(gridDescription: any): number {
-        let cardWl: string = gridDescription.children[3].innerText.trim();
+    function getSingleLookupWL(singleCharacterWLElement: any): number {
+        let singleCardWL: string = singleCharacterWLElement.innerText.trim();
 
-        return parseInt(cardWl);
+        return parseInt(singleCardWL);
     }
 
     /**
@@ -990,6 +1003,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             highestCardIdx = getHighestCardIdx(card_1, card_2);
 
             if (card_3.grab == false) {
+
+                // TODO: error here?
+                // browser says on .wl for cards[...].wl all the way to card_3.wl
                 console.log("highestWL: " + cards[highestCardIdx].wl + "vs card_3: " + card_3.wl);
                 highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_3);
             }
@@ -1222,6 +1238,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let embedGridTitle; // title of grid
                 let embedGridFieldsElement; // grid for drops
                 let embedGridDescriptionElement; // grid for lookups
+                let embedSingleCharacterWLElement; // element for selecting the wishlist field of a single character lookup 
 
                 console.log("grid element: " + embedGridElement);
 
@@ -1350,6 +1367,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     if (embedGridElement) {
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
                         embedGridDescriptionElement = getEmbedGridDescriptionElement(embedGridSelector);
+                        embedSingleCharacterWLElement = getEmbedSingleCharacterWLElement(embedGridSelector);
+
+                        // TODO: singleCharacterLookupWL
 
                         // check for single character lookup
                         if (embedGridTitle.toLowerCase().trim() === "lookup") {
@@ -1357,9 +1377,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                             // testing
                             console.log("single lookup detected");
 
-                            let wl = getLookupWL(embedGridDescriptionElement);
+                            let singleLookupWL = getSingleLookupWL(embedSingleCharacterWLElement);
 
-                            cards[cardIndex].wl = wl;
+                            // TODO: testing single lookup wl
+                            console.log(`--- single lookup WL: ${singleLookupWL} ---`);
+
+                            cards[cardIndex].wl = singleLookupWL;
 
                         // check for multiple character lookup
                         } else if (embedGridTitle.toLowerCase().includes("characters")) {
