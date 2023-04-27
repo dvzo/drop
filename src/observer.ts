@@ -712,6 +712,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // TODO: try without this cooldown?
         // final cooldown before sending the request to grab a card
+        // errored here, card was picked before scl came out?
+        // or maybe the requests still made it through correctly.. ?
         // await sleep(timer._m_cmdCd);
 
         // logging criteria
