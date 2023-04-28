@@ -160,9 +160,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
     var eventCardExists: boolean = false; // check if event card exists
-    var priorityElement_1: string = CardElement.Ice.toString(); // prioritize elements if cards do not meet wl minimum
-    var priorityElement_2: string = CardElement.Fire.toString();
-    var priorityElement_3: string = CardElement.Wind.toString();
+    var priorityElement_1: string = CardElement.Void.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_2: string = CardElement.Metal.toString();
+    var priorityElement_3: string = CardElement.Light.toString();
 
     /**
      * sleep function
@@ -626,7 +626,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "mode": "cors",
                 "credentials": "include"
             });
+
+            // TODO:
+            // wait for wishlst element to popup for this card..
+            // set WL here after each SCL
         }
+
 
         // update client build number for super properties
         // superProperties.client_build_number = await _getClientBuildNumber();
@@ -714,7 +719,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // final cooldown before sending the request to grab a card
         // errored here, card was picked before scl came out?
         // or maybe the requests still made it through correctly.. ?
-        // await sleep(timer._m_cmdCd);
+        console.log("--- waiting here for last card's SCL to go through... ---");
+        await sleep(5000);
+        console.log("--- last card's scl passed! ---");
 
         // logging criteria
         console.log("--- CRITERIA DROPS ---")
@@ -760,6 +767,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             setGrabsByGen();
 
         }
+
+        // TODO: set sleep here so that properties can be loaded before the actual grab requests?
+        // await sleep(5000);
 
         // make sure nonce is the same for all picks **
         if (cards[0].grab == true) {
@@ -849,6 +859,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             // TODO: testing no timers here, since it would just be a request sent?
             // as if u clicked a button
+            // maybe we need the timers here, to make sure the last WL was populated before sending 
             // await sleep(timer._m_cmdCd * 2);
         }
 
@@ -1001,19 +1012,41 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // compare cards 1 and 2, then compare to 3
         if (card_1.grab == false && card_2.grab == false) {
 
-            console.log("card_1: " + card_1.wl + "vs card_2: " + card_2.wl);
+            console.log("--- comparing card_1 and card_2... ---")
+            console.log(`card_1 WL: ${card_1.wl}`);
+            console.log(`card_2 WL: ${card_2.wl}`);
+
             highestCardIdx = getHighestCardIdx(card_1, card_2);
+
+            console.log("--- highest card index info ---");
+            console.log(`name: ${cards[highestCardIdx].name}`);
+            console.log(`series: ${cards[highestCardIdx].series}`);
+            console.log(`wl: ${cards[highestCardIdx].wl}`);
 
             if (card_3.grab == false) {
 
+                console.log(`--- comparing ${cards[highestCardIdx].name} and card_3... ---`);
+
+                // TODO: card_3.wl was not set here
+                console.log(`${cards[highestCardIdx].name} WL: ${cards[highestCardIdx].wl}`);
+                console.log(`card_3 WL: ${card_3.wl}`);
+
                 // TODO: error here?
                 // browser says on .wl for cards[...].wl all the way to card_3.wl
-                console.log("highestWL: " + cards[highestCardIdx].wl + "vs card_3: " + card_3.wl);
+                // console.log("highestWL: " + cards[highestCardIdx].wl + "vs card_3: " + card_3.wl);
                 highestCardIdx = getHighestCardIdx(cards[highestCardIdx], card_3);
+
+                console.log("--- highest card index info ---");
+                console.log(`name: ${cards[highestCardIdx].name}`);
+                console.log(`series: ${cards[highestCardIdx].series}`);
+                console.log(`wl: ${cards[highestCardIdx].wl}`);
             }
 
         // compare card 1 and 3, then compare to 2
         } else if (card_1.grab == false && card_3.grab == false) {
+
+            // TODO: temporary check
+            console.log("--- check shouldnt go here for non-events... ---");
 
             console.log("card_1: " + card_1.wl + "vs card_3: " + card_3.wl);
             highestCardIdx = getHighestCardIdx(card_1, card_3);
@@ -1025,6 +1058,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // compare card 2 and 3, then compare to 1
         } else if (card_2.grab == false && card_3.grab == false) {
+            console.log("--- check shouldnt go here for non-events... ---");
 
             console.log("card_2: " + card_2.wl + "vs card_3: " + card_3.wl);
             highestCardIdx = getHighestCardIdx(card_2, card_3);
@@ -1046,6 +1080,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         //final WL threshold check for grabbables
         for (let i = 0; i < cards.length; i++) {
+
+            console.log(`--- last check for cards ---`);
+            console.log(`name: ${cards[i].name}`);
+            console.log(`series: ${cards[i].series}`);
+            console.log(`grab: ${cards[i].grab}`);
+            console.log(`WL: ${cards[i].wl}`);
+
             if (cards[i].grab == false && cards[i].wl > session._wlThresh) {
                 cards[i].grab = true;
             }
