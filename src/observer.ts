@@ -641,7 +641,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // console.log(`client build number: ${superProperties.client_build_number}`);
 
         // cooldown before the next scl command
-        await sleep(timer._m_cmdCd);
+        // await sleep(timer._m_cmdCd);
+
+        // TODO: testing half cmdCd time
+        await sleep(3000);
 
         // always update global index
         cardIndex++;
@@ -680,7 +683,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // console.log(`client build number: ${superProperties.client_build_number}`);
 
         // cooldown before next scl command
-        await sleep(timer._m_cmdCd);
+        // await sleep(timer._m_cmdCd);
+
+        // TODO: testing half cmdCd time
+        await sleep(3000);
 
         // always update global index
         cardIndex++;
@@ -714,14 +720,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             });
         }
 
-        // update client build number for super properties
-        // superProperties.client_build_number = await _getClientBuildNumber();
-        // console.log(`client build number: ${superProperties.client_build_number}`);
-
-        // TODO: try without this cooldown?
-        // final cooldown before sending the request to grab a card
-        // errored here, card was picked before scl came out?
-        // or maybe the requests still made it through correctly.. ?
+        // need last cooldown here to make sure the last card's wl is set
         console.log("--- waiting here for last card's SCL to go through... ---");
         await sleep(5000);
         console.log("--- last card's scl passed! ---");
