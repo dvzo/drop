@@ -801,7 +801,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             // TODO: testing no timers here, since it would just be a request sent?
             // as if u clicked a button
-            // await sleep(timer._m_cmdCd);
+
+            // TODO: 2023-04-28 : try timers between requests again? looks like it mightve been too fast?
+            // default: await sleep(timer._m_cmdCd);
+            await sleep(2000);
         }
 
         if (cards[1].grab == true) {
@@ -831,6 +834,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // TODO: testing no timers here, since it would just be a request sent?
             // as if u clicked a button
             // await sleep(timer._m_cmdCd * 2);
+
+            // TODO: 2023-04-28 : try timers between requests again? looks like it mightve been too fast?
+            // default: await sleep(timer._m_cmdCd);
+            await sleep(2000);
         }
 
         if (cards[2].grab == true) {
@@ -861,6 +868,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // as if u clicked a button
             // maybe we need the timers here, to make sure the last WL was populated before sending 
             // await sleep(timer._m_cmdCd * 2);
+
+            // TODO: 2023-04-28 : try timers between requests again? looks like it mightve been too fast?
+            // default: await sleep(timer._m_cmdCd);
+            await sleep(2000);
         }
 
         // if all cards are false, grab a random one
