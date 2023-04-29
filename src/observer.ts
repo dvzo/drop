@@ -587,7 +587,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log(`client build number: ${superProperties.client_build_number}`);
 
         // sleep once the cards have been dropped/appeared
-        await sleep(timer._m_cmdCd);
+        // await sleep(timer._m_cmdCd);
+
+        // TODO: testing half cmdCd time
+        await sleep(3000);
 
         let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
 
@@ -1292,7 +1295,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let embedGridTitle; // title of grid
                 let embedGridFieldsElement; // grid for drops
                 let embedGridDescriptionElement; // grid for lookups
-                let embedSingleCharacterWLElement; // element for selecting the wishlist field of a single character lookup 
+                let embedSingleCharacterWLElement; // element for selecting the wishlist field of a single character lookup
 
                 console.log("grid element: " + embedGridElement);
 
