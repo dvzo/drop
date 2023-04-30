@@ -160,9 +160,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
     var eventCardExists: boolean = false; // check if event card exists
-    var priorityElement_1: string = CardElement.Void.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_1: string = CardElement.Earth.toString(); // prioritize elements if cards do not meet wl minimum
     var priorityElement_2: string = CardElement.Metal.toString();
-    var priorityElement_3: string = CardElement.Light.toString();
+    var priorityElement_3: string = CardElement.Wind.toString();
 
     /**
      * sleep function
@@ -1304,9 +1304,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let card;
 
                 // i.e. "SOFI"
-                if (authorElement) {
-                    authorName = authorElement.textContent;
-                }
+                // if (authorElement) {
+                //     authorName = authorElement.textContent;
+                // }
+
+                // TODO: chaining optional operator?
+                authorName = authorElement?.textContent ? authorElement.textContent : null;
 
                 // i.e. "@zootrash is dropping the cards"
                 // also "@zootrash took the card Seunghyub | mmjhz6 |  Ice"
