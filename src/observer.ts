@@ -160,9 +160,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
     var eventCardExists: boolean = false; // check if event card exists
-    var priorityElement_1: string = CardElement.Light.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_1: string = CardElement.Void.toString(); // prioritize elements if cards do not meet wl minimum
     var priorityElement_2: string = CardElement.Fire.toString();
-    var priorityElement_3: string = CardElement.Wind.toString();
+    var priorityElement_3: string = CardElement.Ice.toString();
 
     /**
      * sleep function
@@ -235,6 +235,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     function getSingleBody(msgAccessoriesId: string, dataCustomId: string, nonce: string, cardPick: number): string {
         let customId = `drop_${dataCustomId}_${cardPick}`;
 
+        // TODO: problem??
+        // do we randomize nonce for subsequent requests or nah?
         if (subRequest) {
             nonce = getRandomNonce(msgAccessoriesId);
         }
