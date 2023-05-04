@@ -921,48 +921,28 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
     // TODO: use buttons instead of requests
     const grabCardsByButtons = async (sdnDropRowSelector: string) => {
-        let sdnDropRowElement = document.querySelector(sdnDropRowSelector) as HTMLElement;
-        let sdnButton;
+        let sdnDropRowElement = document.querySelector(sdnDropRowSelector);
+        let sdnButton_0 = sdnDropRowElement?.children[0] ? sdnDropRowElement.children[0] as HTMLElement : null;
+        let sdnButton_1 = sdnDropRowElement?.children[1] ? sdnDropRowElement.children[1] as HTMLElement : null;
+        let sdnButton_2 = sdnDropRowElement?.children[2] ? sdnDropRowElement.children[2] as HTMLElement : null;
 
-        console.log("HERE");
-        console.log(`sdnDropRowElement: ${sdnDropRowElement}`);
-
-        //sdnDropRowElement ? return null : return "";
-        if (sdnDropRowElement) {
-
-
-            if (cards[0].grab == true) {
-                sdnButton = sdnDropRowElement.children[0] as HTMLElement;
-                console.log(`sdbButton: ${sdnButton}`);
-
-                sdnButton.click();
-
-                await sleep(2000);
-            }
-
-            if (cards[1].grab == true) {
-                sdnButton = sdnDropRowElement.children[1] as HTMLElement;
-                console.log(`sdbButton: ${sdnButton}`);
-
-                sdnButton.click();
-
-                await sleep(2000);
-            }
-
-            if (cards[2].grab == true) {
-                sdnButton = sdnDropRowElement.children[2] as HTMLElement;
-                console.log(`sdbButton: ${sdnButton}`);
-
-                sdnButton.click();
-
-                await sleep(2000);
-            }
-        } else {
-
-            console.log("--- sdnDropRowElement does not exist! ---");
-            console.log(`sdnDropRowElement: ${sdnDropRowElement}`);
+        if (cards[0].grab == true && sdnButton_0) {
+            sdnButton_0.click();
+            console.log("--- grabbing card 0 by button! ---");
+            await sleep(2000);
         }
 
+        if (cards[1].grab == true && sdnButton_1) {
+            sdnButton_1.click();
+            console.log("--- grabbing card 1 by button! ---");
+            await sleep(2000);
+        }
+
+        if (cards[2].grab == true && sdnButton_2) {
+            sdnButton_2.click();
+            console.log("--- grabbing card 2 by button! ---");
+            await sleep(2000);
+        }
     }
 
     // TODO: cclean
@@ -1166,6 +1146,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             if (cards[i].grab == false && cards[i].wl > session._wlThresh) {
                 cards[i].grab = true;
             }
+
+            // TODO: screenshot 024 on 2023/05/03
+            // grab was still false with dwight at 28WL
+            console.log(`extra grab must be: ${session._wlThresh}`);
 
             console.log(`--- last check for cards ---`);
             console.log(`name: ${cards[i].name}`);
