@@ -581,7 +581,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let cardElement: string | null;
         let card;
         let msgBody: string; // body changes for each request
-        let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
 
         // update client build number for super properties
         // TODO: only check once for client build number? this will help with slower loading times
@@ -727,6 +726,13 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         await sleep(5000);
         console.log("--- last card's scl passed! ---");
 
+    }
+
+    // TODO: TEST; separating setcardstats
+    /** 
+     * 
+     */
+    const setGrabs = () => {
         // logging criteria
         console.log("--- CRITERIA DROPS ---")
 
@@ -769,11 +775,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         } else {
             console.log("- drop has no other criteria, grabbing lowest gen card...");
             setGrabsByGen();
-
         }
+    }
 
-        // TODO: set sleep here so that properties can be loaded before the actual grab requests?
-        // await sleep(5000);
+    // TODO: clean
+    /**
+     * 
+     * @param msgAccessoriesId 
+     * @param dataCustomId 
+     */
+    const grabCards = async (msgAccessoriesId: string, dataCustomId: string) => {
+        // TODO: for subsequent picks, use button clicks instead?
+        // TODO: "SD" vs "SDN" will have different elements/children
+
+        let nonce = getRandomNonce(msgAccessoriesId); // setting one nonce to be used across multiple requests
 
         // make sure nonce is the same for all picks **
         if (cards[0].grab == true) {
@@ -902,7 +917,39 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 "credentials": "include"
             });
         }
+    }
 
+    // TODO: use buttons instead of requests
+    const grabCardsByButtons = async (sdnDropRowSelector: string) => {
+        let sdnDropRowElement = document.querySelector(sdnDropRowSelector);
+        let sdnButton_0 = sdnDropRowElement?.children[0] ? sdnDropRowElement.children[0] as HTMLElement : null;
+        let sdnButton_1 = sdnDropRowElement?.children[1] ? sdnDropRowElement.children[1] as HTMLElement : null;
+        let sdnButton_2 = sdnDropRowElement?.children[2] ? sdnDropRowElement.children[2] as HTMLElement : null;
+
+        if (cards[0].grab == true && sdnButton_0) {
+            sdnButton_0.click();
+            console.log("--- grabbing card 0 by button! ---");
+            await sleep(2000);
+        }
+
+        if (cards[1].grab == true && sdnButton_1) {
+            sdnButton_1.click();
+            console.log("--- grabbing card 1 by button! ---");
+            await sleep(2000);
+        }
+
+        if (cards[2].grab == true && sdnButton_2) {
+            sdnButton_2.click();
+            console.log("--- grabbing card 2 by button! ---");
+            await sleep(2000);
+        }
+    }
+
+    // TODO: cclean
+    /**
+     * 
+     */
+    const resetGlobals = () => {
         // finally, reset the card index, empty the current card array, and reset subsequent requests
         cardIndex = 0;
 
@@ -1096,15 +1143,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         //final WL threshold check for grabbables
         for (let i = 0; i < cards.length; i++) {
 
+            if (cards[i].grab == false && cards[i].wl > session._wlThresh) {
+                cards[i].grab = true;
+            }
+
+            // TODO: screenshot 024 on 2023/05/03
+            // grab was still false with dwight at 28WL
+            console.log(`extra grab must be: ${session._wlThresh}`);
+
             console.log(`--- last check for cards ---`);
             console.log(`name: ${cards[i].name}`);
             console.log(`series: ${cards[i].series}`);
             console.log(`grab: ${cards[i].grab}`);
             console.log(`WL: ${cards[i].wl}`);
-
-            if (cards[i].grab == false && cards[i].wl > session._wlThresh) {
-                cards[i].grab = true;
-            }
         }
     }
 
@@ -1298,6 +1349,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let embedGridDescriptionElement; // grid for lookups
                 let embedSingleCharacterWLElement; // element for selecting the wishlist field of a single character lookup
 
+                let sdnDropRow = `#${chatMsgId} > div > div[id*='message-accessories'] > div > div > div`; // 3 buttons
+                let sdnDropRowElement = document.querySelector(sdnDropRow);
+
                 console.log("grid element: " + embedGridElement);
 
                 // grid cards
@@ -1360,7 +1414,14 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     cards.length = 0;
 
                                     // populate the card stats
-                                    setCardStats(gridCards, msgAccessoriesId, dataCustomId);
+                                    setCardStats(gridCards, msgAccessoriesId, dataCustomId)
+                                    .then(() => setGrabs())
+                                    .then(() => grabCardsByButtons(sdnDropRow))
+                                    .then(() => resetGlobals());
+                                    // setGrabs();
+
+                                    // TODO: original
+                                    // grabCards(msgAccessoriesId, dataCustomId);
                                 }
 
                             }
