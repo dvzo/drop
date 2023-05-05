@@ -591,7 +591,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(3000);
+        // add a little more time
+        await sleep(3500);
 
         let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
 
@@ -645,7 +646,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(3000);
+        await sleep(3500);
 
         // always update global index
         cardIndex++;
@@ -687,7 +688,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(3000);
+        await sleep(3500);
 
         // always update global index
         cardIndex++;
@@ -723,7 +724,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // need last cooldown here to make sure the last card's wl is set
         console.log("--- waiting here for last card's SCL to go through... ---");
-        await sleep(5000);
+        await sleep(3500);
         console.log("--- last card's scl passed! ---");
 
     }
