@@ -358,6 +358,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         return gridTitle;
     }
+    
+    // TODO: get the embed grid class 'imageContent'
+    const getEmbedGridSeries = (embedGridSelector: string): HTMLElement | null => {
+        let gridSeriesElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedDescription'] > strong`);
+
+        console.log(`### GRID SERIES ELEMENT: ${gridSeriesElement}`);
+
+        return gridSeriesElement;
+    }
 
     /**
      * returns the grid field element
@@ -442,14 +451,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (card.series[card.series.length - 1] == '-') {
             card.series = card.series.slice(0, -1);
         }
-
-        console.log(`--- CARD ${card.idx} INFO ---`);
-        console.log("element:" + card.element);
-        console.log("gen: " + card.gen);
-        console.log("name: " + card.name);
-        console.log("series: " + card.series);
-        console.log("card idx: " + card.idx);
-        console.log(`------`);
 
         return card;
     }
@@ -946,6 +947,24 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
     }
 
+    /**
+     * print out all the cards to the console
+     */
+    const printCards = async () => {
+
+        for (let i = 0; i < cards.length; i++) {
+            console.log(`--- CARD ${i} ---`);
+            console.log(`element: ${cards[i].element}`);
+            console.log(`gen: ${cards[i].gen}`);
+            console.log(`grab: ${cards[i].grab}`);
+            console.log(`idx: ${cards[i].idx}`);
+            console.log(`name: ${cards[i].name}`);
+            console.log(`series: ${cards[i].series}`);
+            console.log(`wl: ${cards[i].wl}`);
+            console.log(`---`);
+        }
+    }
+
     // TODO: cclean
     /**
      * 
@@ -1318,20 +1337,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // skip over blank nodelists
             if (mutation.addedNodes.length > 0) {
 
-                console.log("mutation.addedNodes[0]: " + mutation.addedNodes[0]);
-                console.log("mutation.addedNodes[0].id: " + mutation.addedNodes[0].id);
-
                 // every message sent will be an 'LI' tag
                 let dataCustomId;
                 let chatMsgId = mutation.addedNodes[0].id; // <li id="chat-messages-[channelId]-[msgAccessoriesId]">
                 let msgAccessoriesId = getIdAtIndex(chatMsgId, 3);
                 let dataCustomIdSelector = `#${chatMsgId} > div > div > div > div`;
                 let dataCustomIdElement = document.querySelector(dataCustomIdSelector); // "#message-content-[id]"
-
-
-                if (dataCustomIdElement) {
-                    dataCustomId = getIdAtIndex(dataCustomIdElement.id, 2); // get #message-content-[dataCustomId]
-                }
 
                 // message content and author
                 let authorName;
@@ -1346,39 +1357,33 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 let embedGridSelector = `#${chatMsgId} > div > div[id*='message-accessories'] > article > div > div`;
                 let embedGridElement = document.querySelector(embedGridSelector);
                 let embedGridTitle; // title of grid
+                let embedGridSeries; // series name for single character lookups
                 let embedGridFieldsElement; // grid for drops
                 let embedGridDescriptionElement; // grid for lookups
                 let embedSingleCharacterWLElement; // element for selecting the wishlist field of a single character lookup
 
                 let sdnDropRow = `#${chatMsgId} > div > div[id*='message-accessories'] > div > div > div`; // 3 buttons
-                let sdnDropRowElement = document.querySelector(sdnDropRow);
-
-                console.log("grid element: " + embedGridElement);
 
                 // grid cards
                 let gridCards;
-                let cardDescription;
-                let card;
+
+                // TODO: remove if works next run lol
+                /*
+                if (dataCustomIdElement) {
+                    dataCustomId = getIdAtIndex(dataCustomIdElement.id, 2); 
+                } */
+
+                // get #message-content-[dataCustomId]
+                dataCustomId = dataCustomIdElement?.id ? getIdAtIndex(dataCustomIdElement?.id, 2) : null;
 
                 // i.e. "SOFI"
-                // if (authorElement) {
-                //     authorName = authorElement.textContent;
-                // }
-
-                // TODO: chaining optional operator?
                 authorName = authorElement?.textContent ? authorElement.textContent : null;
 
                 // i.e. "@zootrash is dropping the cards"
                 // also "@zootrash took the card Seunghyub | mmjhz6 |  Ice"
                 // when cards are gone: "@zootrash dropped the cards."
                 // this is pure text entered from users
-                if (msgContentElement) {
-                    msgContent = msgContentElement.textContent;
-                }
-
-                console.log("custom_id: " + dataCustomId);
-                console.log("authorName: " + authorName);
-                console.log("msgContent: " + msgContent);
+                msgContent = msgContentElement?.textContent ? msgContentElement.textContent : null;
 
                 // TODO: if command is typed, disconnect the observer? :O
                 /*
@@ -1396,9 +1401,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         // check for embedded / sdn text only grid
                         // check if dropped response contains the block grid
                         if (embedGridElement) {
-
-                            console.log("embed grid element: " + embedGridElement);
-
                             embedGridTitle = getEmbedGridTitle(embedGridSelector);
                             embedGridFieldsElement = getEmbedGridFieldsElement(embedGridSelector);
 
@@ -1417,6 +1419,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     // populate the card stats
                                     setCardStats(gridCards, msgAccessoriesId, dataCustomId)
                                     .then(() => setGrabs())
+                                    .then(() => printCards())
                                     .then(() => grabCardsByButtons(sdnDropRow))
                                     .then(() => resetGlobals());
                                     // setGrabs();
@@ -1489,16 +1492,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
                     if (embedGridElement) {
                         embedGridTitle = getEmbedGridTitle(embedGridSelector);
+                        embedGridSeries = getEmbedGridSeries(embedGridSelector);
                         embedGridDescriptionElement = getEmbedGridDescriptionElement(embedGridSelector);
                         embedSingleCharacterWLElement = getEmbedSingleCharacterWLElement(embedGridSelector);
 
                         // TODO: singleCharacterLookupWL
 
-                        // check for single character lookup
-                        if (embedGridTitle.toLowerCase().trim() === "lookup") {
+                        console.log(`### EMBEDCONTENT!: ${embedGridSeries}`);
 
-                            // testing
-                            console.log("single lookup detected");
+                        // check imageContent class for single character lookup
+                        // if (embedGridTitle.toLowerCase().trim() === "lookup") {
+                        if (embedGridSeries?.innerHTML.toLowerCase().includes("series:")) {
+
+                            console.log("single lookup detected!");
 
                             let singleLookupWL = getSingleLookupWL(embedSingleCharacterWLElement);
 
