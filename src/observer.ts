@@ -574,7 +574,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // TODO: testing half cmdCd time
         // add a little more time
-        await sleep(4700);
+        await sleep(5000);
 
         let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
 
@@ -628,7 +628,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(4700);
+        await sleep(5000);
 
         // always update global index
         cardIndex++;
@@ -670,7 +670,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(4700);
+        await sleep(5000);
 
         // always update global index
         cardIndex++;
@@ -907,19 +907,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (cards[0].grab == true && sdnButton_0) {
             sdnButton_0.click();
             console.log("--- grabbing card 0 by button! ---");
-            await sleep(2000);
+            await sleep(3000);
         }
 
         if (cards[1].grab == true && sdnButton_1) {
             sdnButton_1.click();
             console.log("--- grabbing card 1 by button! ---");
-            await sleep(2000);
+            await sleep(3000);
         }
 
         if (cards[2].grab == true && sdnButton_2) {
             sdnButton_2.click();
             console.log("--- grabbing card 2 by button! ---");
-            await sleep(2000);
+            await sleep(3000);
         }
     }
 
