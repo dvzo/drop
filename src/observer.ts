@@ -574,7 +574,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // TODO: testing half cmdCd time
         // add a little more time
-        await sleep(3500);
+        await sleep(4700);
 
         let closeButton: HTMLElement = document.querySelector("div[class*='closeButton']") as HTMLElement;
 
@@ -628,7 +628,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(3500);
+        await sleep(4700);
 
         // always update global index
         cardIndex++;
@@ -670,7 +670,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // await sleep(timer._m_cmdCd);
 
         // TODO: testing half cmdCd time
-        await sleep(3500);
+        await sleep(4700);
 
         // always update global index
         cardIndex++;
