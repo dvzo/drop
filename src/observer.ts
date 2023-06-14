@@ -419,13 +419,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         gen = description[0].split(' ');
 
         // automatically grab event cards; give special gen 0
-        if (gen[0].toLowerCase().includes("event") || gen[0].toLowerCase().includes("rose")) {
+        // TODO: does not include "gen"?
+        if (gen[0].toLowerCase().includes("event") || gen[0].toLowerCase().includes("rose")
+            || gen[0].toLowerCase().includes("onigiri")) {
 
-            if (gen[0].toLowerCase().includes("event")) {
-                eventCardExists = true;
-            } else {
-                eventCardExists = false;
-            }
+            eventCardExists = true;
 
             console.log("event card! ");
             card.gen = 0;
@@ -505,23 +503,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
 
         return null;
-    }
-
-    /**
-     * return true if current drop has a card past the session wl threshold
-     * first criteria to check if an event is happening
-     */
-    function dropHasWLThresholdCard(): boolean {
-        let hasWLThresholdCard = false;
-
-        for (let i = 0; i < cards.length; i++) {
-
-            if (cards[i].wl >= session._wlThresh) {
-                hasWLThresholdCard = true;
-            }
-        }
-
-        return hasWLThresholdCard;
     }
 
     /**
@@ -741,12 +722,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         // prioritize event cards
         if (eventCardExists) {
             console.log("- event card exists...");
-
-            // only grab an extra card during an event if a card has a wl >= the wl threshold
-            if (dropHasWLThresholdCard()) {
-                console.log("- grabbing extra card!");
-                setGrabsByWL();
-            }
+            setGrabsByWLDuringEvents();
 
             // check if drops are above the wl minumum
         } else if (dropHasWLMinimum()) {
@@ -1082,7 +1058,23 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * compare wishlists in card array
+     * get the card count during events; counts event items as a card
+     */
+    const getEventCardCount = (): number => {
+        let eventCardCount: number = 0;
+
+        for(let i = 0; i < cards.length; i++) {
+
+            if (cards[i].grab == true) {
+                eventCardCount++;
+            }
+        }
+
+        return eventCardCount;
+    }
+
+    /**
+     * currently only ran either when a card meets wl minimum, or an event card exists with another card meeting the threshold
      * auto pick event cards
      */
     function setGrabsByWL() {
@@ -1155,11 +1147,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         cards[highestCardIdx].grab = true;
 
-        // reset favorable card if an event card was chosen and threshold not met
-        if (eventCardExists && cards[highestCardIdx].wl < session._wlThresh) {
-            cards[highestCardIdx].grab = false;
-        }
-
         //final WL threshold check for grabbables
         for (let i = 0; i < cards.length; i++) {
 
@@ -1176,6 +1163,54 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             console.log(`series: ${cards[i].series}`);
             console.log(`grab: ${cards[i].grab}`);
             console.log(`WL: ${cards[i].wl}`);
+        }
+    }
+
+    /**
+     * separate function for grabs during events
+     */
+    const setGrabsByWLDuringEvents = () => {
+        let highestCardIdx: number = 0; // default highest idx
+        let eventCardCount: number = getEventCardCount();
+        let card_1 = cards[0];
+        let card_2 = cards[1];
+        let card_3 = cards[2];
+
+        // TODO: if there are 2+ event cards, or event card + event item
+        // set highestcardidx to non event card
+        if (eventCardCount >= 2) {
+            highestCardIdx = cards[0].grab == false ? 0 : -1;
+            highestCardIdx = cards[1].grab == false ? 1 : -1;
+            highestCardIdx = cards[2].grab == false ? 2 : -1;
+
+        } else if (eventCardCount == 1) {
+
+            if (card_1.grab == true) {
+                console.log("card_2: " + card_2.wl + "vs card_3: " + card_3.wl);
+                highestCardIdx = getHighestCardIdx(card_2, card_3);
+
+            } else if (card_2.grab == true) {
+                console.log("card_1: " + card_1.wl + "vs card_3: " + card_3.wl);
+                highestCardIdx = getHighestCardIdx(card_1, card_3);
+
+            } else if (card_3.grab == true) {
+                console.log("card_1: " + card_1.wl + "vs card_2: " + card_2.wl);
+                highestCardIdx = getHighestCardIdx(card_1, card_2);
+            }
+        }
+
+        // check if non-event card meets wl thresh
+        if (highestCardIdx >= 0 && cards[highestCardIdx].wl >= session._wlThresh) {
+            console.log("event cards exist with a non-event card WL!");
+            console.log(`non-event element: ${cards[highestCardIdx].element}`);
+            console.log(`non-event gen: ${cards[highestCardIdx].gen}`);
+            console.log(`non-event grab: ${cards[highestCardIdx].grab}`);
+            console.log(`non-event idx: ${cards[highestCardIdx].idx}`);
+            console.log(`non-event name: ${cards[highestCardIdx].name}`);
+            console.log(`non-event series: ${cards[highestCardIdx].series}`);
+            console.log(`non-event wl: ${cards[highestCardIdx].wl}`);
+
+            cards[highestCardIdx].grab = true;
         }
     }
 
