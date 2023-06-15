@@ -419,15 +419,17 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         gen = description[0].split(' ');
 
         // automatically grab event cards; give special gen 0
-        // TODO: does not include "gen"?
-        if (gen[0].toLowerCase().includes("event") || gen[0].toLowerCase().includes("rose")
-            || gen[0].toLowerCase().includes("onigiri")) {
+        if (gen[0].toLowerCase().includes("event") || !gen[0].toLowerCase().includes("gen")) {
 
-            eventCardExists = true;
+            // *IMPORTANT*
+            // sets eventCardExists only if card is an event card, not an event item
+            // covers cases where only items exists but event cards dont
+            eventCardExists = gen[0].toLowerCase().includes("event") ? true : false;
 
-            console.log("event card! ");
+            console.log("event card / event item!");
             card.gen = 0;
             card.grab = true;
+
         } else {
             card.gen = parseInt(gen[1]);
 
@@ -723,7 +725,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (eventCardExists) {
             console.log("- event card exists...");
             setGrabsByWLDuringEvents();
-
+        
             // check if drops are above the wl minumum
         } else if (dropHasWLMinimum()) {
             console.log("- drop has wl minimum...");
@@ -1176,7 +1178,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let card_2 = cards[1];
         let card_3 = cards[2];
 
-        // TODO: if there are 2+ event cards, or event card + event item
+        // if there are 2+ event cards, or event card + event item
         // set highestcardidx to non event card
         if (eventCardCount >= 2) {
             highestCardIdx = cards[0].grab == false ? 0 : -1;
