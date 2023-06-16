@@ -160,9 +160,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
     var eventCardExists: boolean = false; // check if event card exists
-    var priorityElement_1: string = CardElement.Wind.toString(); // prioritize elements if cards do not meet wl minimum
-    var priorityElement_2: string = CardElement.Wood.toString();
-    var priorityElement_3: string = CardElement.Metal.toString();
+    var priorityElement_1: string = CardElement.Void.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_2: string = CardElement.Fire.toString();
+    var priorityElement_3: string = CardElement.Light.toString();
 
     /**
      * sleep function
@@ -424,7 +424,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // *IMPORTANT*
             // sets eventCardExists only if card is an event card, not an event item
             // covers cases where only items exists but event cards dont
-            eventCardExists = gen[0].toLowerCase().includes("event") ? true : false;
+            // eventCardExists = gen[0].toLowerCase().includes("event") ? true : false;
+
+            // TODO: trying this for all event cards and items
+            eventCardExists = true;
 
             console.log("event card / event item!");
             card.gen = 0;
@@ -909,19 +912,19 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         if (cards[0].grab == true && sdnButton_0) {
             sdnButton_0.click();
             console.log("--- grabbing card 0 by button! ---");
-            await sleep(3000);
+            await sleep(4000);
         }
 
         if (cards[1].grab == true && sdnButton_1) {
             sdnButton_1.click();
             console.log("--- grabbing card 1 by button! ---");
-            await sleep(3000);
+            await sleep(4000);
         }
 
         if (cards[2].grab == true && sdnButton_2) {
             sdnButton_2.click();
             console.log("--- grabbing card 2 by button! ---");
-            await sleep(3000);
+            await sleep(4000);
         }
     }
 
