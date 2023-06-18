@@ -468,8 +468,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         gen = description[0].split(' ');
 
         // automatically grab event cards; give special gen 0
-        if (gen[0].toLowerCase().includes("event") || !gen[0].toLowerCase().includes("gen")) {
-
+        if (gen[0].toLowerCase().includes("event")) { // event cards
 
             // TODO: delete comment?
             // *IMPORTANT*
@@ -482,23 +481,21 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             card.grab = true;
             card.isEventCard = true;
 
-        } else if (!gen[0].toLowerCase().includes("gen")) {
+        } else if (!gen[0].toLowerCase().includes("gen")) { // event items
             console.log("event item!");
             card.gen = 0;
             card.grab = true;
             card.isEventItem = true;
 
         } else {
-            card.gen = parseInt(gen[1]);
-
             console.log("non event card! "); 
+            card.gen = parseInt(gen[1]);
             card.grab = false;
         }
 
         // [gen], [name], [series]
         card.name = description[1];
         card.series = description[2];
-
         card.element = cardElement ? cardElement : "";
 
         // clip appended '-' for name and series if they were shortened
