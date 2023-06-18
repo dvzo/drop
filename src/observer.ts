@@ -821,12 +821,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 setGrabsByGenDuringEventsForEventItems();
             }
 
-        // both event cards and event items
-        } else if (_eventCardExists && _eventItemExists){
-            console.log("- both event card and event item exists!");
-
-            // TODO:
-
             // check if drops are above the wl minumum
         } else if (dropHasWLMinimum()) {
             console.log("- drop has wl minimum...");
