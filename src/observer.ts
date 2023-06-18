@@ -75,6 +75,8 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         private _series!: string;
         private _grab: boolean = false; // false by default
         private _element!: string;
+        private _isEventCard: boolean = false;
+        private _isEventItem: boolean = false;
 
         public get idx(): number {
             return this._idx;
@@ -131,6 +133,22 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         public set element(element: string) {
             this._element = element;
         }
+
+        public get isEventCard(): boolean {
+            return this._isEventCard;
+        }
+
+        public set isEventCard(isEventCard: boolean) {
+            this._isEventCard = isEventCard;
+        }
+
+        public get isEventItem(): boolean {
+            return this._isEventItem;
+        }
+
+        public set isEventItem(isEventItem: boolean) {
+            this._isEventItem = isEventItem;
+        }
     }
 
     /**
@@ -159,7 +177,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /** globals */
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
-    var eventCardExists: boolean = false; // check if event card exists
     var priorityElement_1: string = CardElement.Void.toString(); // prioritize elements if cards do not meet wl minimum
     var priorityElement_2: string = CardElement.Fire.toString();
     var priorityElement_3: string = CardElement.Light.toString();
@@ -343,8 +360,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         return clientBuildNumber ? clientBuildNumber : 0;
     }
 
-
-
     /**
      * get the title of the embed grid element
      * */
@@ -399,6 +414,40 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * checks to see if there is an event card in the card array
+     * @returns true if an event card exists in the card array
+     */
+    const eventCardExists = (): boolean => {
+        let eventCardExists: boolean = false;
+
+        cards.forEach((card) => {
+
+            if (card.isEventCard) {
+                eventCardExists = true;
+            }
+        });
+
+        return eventCardExists;
+    }
+
+    /**
+     * checks to see if there is an event item in the card array
+     * @returns true if an event item exists in the card array
+     */
+    const eventItemExists = (): boolean => {
+        let eventItemExists: boolean = false;
+
+        cards.forEach((card) => {
+
+            if (card.isEventItem) {
+                eventItemExists = true;
+            }
+        });
+
+        return eventItemExists;
+    }
+
+    /**
      * return a card with gen, name, and series populated
      * */
     function createCard(cardDescription: string, cardElement: string | null, idx: number): Card {
@@ -419,31 +468,34 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         gen = description[0].split(' ');
 
         // automatically grab event cards; give special gen 0
-        if (gen[0].toLowerCase().includes("event") || !gen[0].toLowerCase().includes("gen")) {
+        if (gen[0].toLowerCase().includes("event")) { // event cards
 
+            // TODO: delete comment?
             // *IMPORTANT*
             // sets eventCardExists only if card is an event card, not an event item
             // covers cases where only items exists but event cards dont
             // eventCardExists = gen[0].toLowerCase().includes("event") ? true : false;
 
-            // TODO: trying this for all event cards and items
-            eventCardExists = true;
-
-            console.log("event card / event item!");
+            console.log("event card!");
             card.gen = 0;
             card.grab = true;
+            card.isEventCard = true;
+
+        } else if (!gen[0].toLowerCase().includes("gen")) { // event items
+            console.log("event item!");
+            card.gen = 0;
+            card.grab = true;
+            card.isEventItem = true;
 
         } else {
-            card.gen = parseInt(gen[1]);
-
             console.log("non event card! "); 
+            card.gen = parseInt(gen[1]);
             card.grab = false;
         }
 
         // [gen], [name], [series]
         card.name = description[1];
         card.series = description[2];
-
         card.element = cardElement ? cardElement : "";
 
         // clip appended '-' for name and series if they were shortened
@@ -721,14 +773,54 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * 
      */
     const setGrabs = () => {
+        let _eventCardExists: boolean = eventCardExists();
+        let _eventItemExists: boolean = eventItemExists();
+
         // logging criteria
         console.log("--- CRITERIA DROPS ---")
 
-        // prioritize event cards
-        if (eventCardExists) {
-            console.log("- event card exists...");
-            setGrabsByWLDuringEvents();
-        
+        // drops that contain an event card, and can include an event item
+        if (_eventCardExists) {
+            console.log("- event card exists!");
+
+            // only grab an extra card with a wl-min when an event card exists
+            if (dropHasWLMinimum()) {
+                console.log("- event card with a wl-min card exists!");
+                setGrabsByWLDuringEventsForAllEventCards();
+            }     
+
+        // drops that only contain an event item
+        } else if (_eventItemExists && !_eventCardExists) {
+            console.log("- only event items exist...");
+
+            // check all criteria since you can get a free drop with an event item
+            if (dropHasWLMinimum()) {
+                console.log("- event item with a wl-min card exists!");
+                setGrabsByWLDuringEventsForAllEventCards();
+
+            } else if (dropHasLowGenCard()) {
+                console.log("- event item with a low gen card exists!");
+                setGrabsByGenDuringEventsForEventItems();
+
+            } else if (dropHasPriorityElement(priorityElement_1)) {
+                console.log(`- event item with a priority element: ${priorityElement_1} exists!`);
+                setGrabsByElementDuringEventsForEventItems(priorityElement_1);
+
+            } else if (dropHasPriorityElement(priorityElement_2)) {
+                console.log(`- event item with a priority element: ${priorityElement_2} exists!`);
+                setGrabsByElementDuringEventsForEventItems(priorityElement_2);
+
+            } else if (dropHasPriorityElement(priorityElement_3)) {
+                console.log(`- event item with a priority element: ${priorityElement_2} exists!`);
+                setGrabsByElementDuringEventsForEventItems(priorityElement_3);
+
+            } else {
+
+                // finally, get lowest gen possible after all filters
+                console.log(`- event item with no other drop criteria, grabbing lowest gen card!`);
+                setGrabsByGenDuringEventsForEventItems();
+            }
+
             // check if drops are above the wl minumum
         } else if (dropHasWLMinimum()) {
             console.log("- drop has wl minimum...");
@@ -763,7 +855,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
     // TODO: clean
     /**
-     * 
+     * grab random cards for the SD command
      * @param msgAccessoriesId 
      * @param dataCustomId 
      */
@@ -902,7 +994,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
     }
 
-    // TODO: use buttons instead of requests
+    /**
+     * use buttons instead of ajax requests
+     * @param sdnDropRowSelector selector for the button row for sdn commands
+     */
     const grabCardsByButtons = async (sdnDropRowSelector: string) => {
         let sdnDropRowElement = document.querySelector(sdnDropRowSelector);
         let sdnButton_0 = sdnDropRowElement?.children[0] ? sdnDropRowElement.children[0] as HTMLElement : null;
@@ -946,18 +1041,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
     }
 
-    // TODO: cclean
     /**
-     * 
+     * finally reset the card index, empty the card array, and reset subsequent requests
      */
     const resetGlobals = () => {
-        // finally, reset the card index, empty the current card array, and reset subsequent requests
         cardIndex = 0;
-
-        // TODO: physically empty elements from array
-        // TODO: set all cards grabs to false?
         cards.length = 0;
-        eventCardExists = false;
         subRequest = false;
     }
 
@@ -1068,12 +1157,12 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     const getEventCardCount = (): number => {
         let eventCardCount: number = 0;
 
-        for(let i = 0; i < cards.length; i++) {
+        cards.forEach((card) => {
 
-            if (cards[i].grab == true) {
+            if (card.isEventCard || card.isEventItem) {
                 eventCardCount++;
             }
-        }
+        });
 
         return eventCardCount;
     }
@@ -1172,35 +1261,32 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
-     * separate function for grabs during events
+     * set grabs by wishlist during events
+     * works for both event cards and event items
      */
-    const setGrabsByWLDuringEvents = () => {
+    const setGrabsByWLDuringEventsForAllEventCards = (): void => {
         let highestCardIdx: number = 0; // default highest idx
         let eventCardCount: number = getEventCardCount();
         let card_1 = cards[0];
         let card_2 = cards[1];
         let card_3 = cards[2];
 
-        // if there are 2+ event cards, or event card + event item
-        // set highestcardidx to non event card
         if (eventCardCount >= 2) {
-            highestCardIdx = cards[0].grab == false ? 0 : -1;
-            highestCardIdx = cards[1].grab == false ? 1 : -1;
-            highestCardIdx = cards[2].grab == false ? 2 : -1;
+            highestCardIdx = (card_1.isEventCard || card_1.isEventItem) ? -1 : 0;
+            highestCardIdx = (card_2.isEventCard || card_2.isEventItem) ? -1 : 1;
+            highestCardIdx = (card_3.isEventCard || card_3.isEventItem) ? -1 : 2;
 
-        } else if (eventCardCount == 1) {
+        } else if (eventCardCount == 1) { // only one event card
 
-            if (card_1.grab == true) {
-                console.log("card_2: " + card_2.wl + "vs card_3: " + card_3.wl);
+            if (card_1.isEventCard || card_1.isEventItem) {
                 highestCardIdx = getHighestCardIdx(card_2, card_3);
 
-            } else if (card_2.grab == true) {
-                console.log("card_1: " + card_1.wl + "vs card_3: " + card_3.wl);
+            } else if (card_2.isEventCard || card_1.isEventItem) {
                 highestCardIdx = getHighestCardIdx(card_1, card_3);
 
-            } else if (card_3.grab == true) {
-                console.log("card_1: " + card_1.wl + "vs card_2: " + card_2.wl);
-                highestCardIdx = getHighestCardIdx(card_1, card_2);
+            } else if (card_3.isEventCard || card_1.isEventItem) {
+                highestCardIdx = getHighestCardIdx(card_2, card_3);
+
             }
         }
 
@@ -1217,6 +1303,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
             cards[highestCardIdx].grab = true;
         }
+
     }
 
     /**
@@ -1298,6 +1385,51 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     }
 
     /**
+     * set grabs for element during events, only for event items
+     * @param priorityElement 
+     */
+    const setGrabsByElementDuringEventsForEventItems = (priorityElement: string): void => {
+        let priorityElementIndex: number = 0; // default priority element index
+        let eventCardCount: number = getEventCardCount();
+        let card_1 = cards[0];
+        let card_2 = cards[1];
+        let card_3 = cards[2];
+
+        if (eventCardCount >= 2) {
+            priorityElementIndex = card_1.isEventCard ? -1 : 0;
+            priorityElementIndex = card_2.isEventCard ? -1 : 1;
+            priorityElementIndex = card_3.isEventCard ? -1 : 2;
+
+        } else if (eventCardCount == 1) { // only one event card
+
+            if (card_1.isEventItem) {
+                priorityElementIndex = getPriorityElementIdx(card_2, card_3, priorityElement);
+
+            } else if (card_2.isEventItem) {
+                priorityElementIndex = getPriorityElementIdx(card_1, card_3, priorityElement);
+
+            } else if (card_3.isEventItem) {
+                priorityElementIndex = getPriorityElementIdx(card_1, card_2, priorityElement);
+
+            }
+        }
+
+        // check if non-event card meets wl thresh
+        if (priorityElementIndex>= 0) {
+            console.log(`event cards exist with a priority element: ${priorityElement}!`);
+            console.log(`non-event element: ${cards[priorityElementIndex].element}`);
+            console.log(`non-event gen: ${cards[priorityElementIndex].gen}`);
+            console.log(`non-event grab: ${cards[priorityElementIndex].grab}`);
+            console.log(`non-event idx: ${cards[priorityElementIndex].idx}`);
+            console.log(`non-event name: ${cards[priorityElementIndex].name}`);
+            console.log(`non-event series: ${cards[priorityElementIndex].series}`);
+            console.log(`non-event wl: ${cards[priorityElementIndex].wl}`);
+
+            cards[priorityElementIndex].grab = true;
+        }
+    }
+
+    /**
      * set grabs by lowest gen number
      */
     function setGrabsByGen(): void {
@@ -1353,6 +1485,49 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         console.log("low gen card number: " + cards[lowestGenIndex].gen);
 
         cards[lowestGenIndex].grab = true;
+    }
+
+    /**
+     * set grabs by lowest gen during events, only for event items
+     */
+    const setGrabsByGenDuringEventsForEventItems = (): void => {
+        let lowGenIdx: number = 0; // default highest idx
+        let eventCardCount: number = getEventCardCount();
+        let card_1 = cards[0];
+        let card_2 = cards[1];
+        let card_3 = cards[2];
+
+        if (eventCardCount >= 2) {
+            lowGenIdx = card_1.isEventCard ? -1 : 0;
+            lowGenIdx = card_2.isEventCard ? -1 : 1;
+            lowGenIdx = card_3.isEventCard ? -1 : 2;
+
+        } else if (eventCardCount == 1) { // only one event card
+
+            if (card_1.isEventItem) {
+                lowGenIdx = getLowestGenIdx(card_2, card_3);
+
+            } else if (card_2.isEventItem) {
+                lowGenIdx = getLowestGenIdx(card_1, card_3);
+
+            } else if (card_3.isEventItem) {
+                lowGenIdx = getLowestGenIdx(card_2, card_3);
+
+            }
+        }
+
+        if (lowGenIdx >= 0) {
+            console.log("event cards exist with a low gen card!");
+            console.log(`non-event element: ${cards[lowGenIdx].element}`);
+            console.log(`non-event gen: ${cards[lowGenIdx].gen}`);
+            console.log(`non-event grab: ${cards[lowGenIdx].grab}`);
+            console.log(`non-event idx: ${cards[lowGenIdx].idx}`);
+            console.log(`non-event name: ${cards[lowGenIdx].name}`);
+            console.log(`non-event series: ${cards[lowGenIdx].series}`);
+            console.log(`non-event wl: ${cards[lowGenIdx].wl}`);
+
+            cards[lowGenIdx].grab = true;
+        }
     }
 
     // selector for all messages
