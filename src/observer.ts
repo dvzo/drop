@@ -1004,19 +1004,21 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let sdnButton_1 = sdnDropRowElement?.children[1] ? sdnDropRowElement.children[1] as HTMLElement : null;
         let sdnButton_2 = sdnDropRowElement?.children[2] ? sdnDropRowElement.children[2] as HTMLElement : null;
 
-        if (cards[0].grab == true && sdnButton_0) {
+        // TODO: for future, grab event cards first?
+
+        if ((cards[0].grab == true || cards[0].isEventCard || cards[0].isEventItem) && sdnButton_0) {
             sdnButton_0.click();
             console.log("--- grabbing card 0 by button! ---");
             await sleep(4000);
         }
 
-        if (cards[1].grab == true && sdnButton_1) {
+        if ((cards[1].grab == true || cards[1].isEventCard || cards[1].isEventItem) && sdnButton_1) {
             sdnButton_1.click();
             console.log("--- grabbing card 1 by button! ---");
             await sleep(4000);
         }
 
-        if (cards[2].grab == true && sdnButton_2) {
+        if ((cards[2].grab == true || cards[2].isEventCard || cards[2].isEventItem) && sdnButton_2) {
             sdnButton_2.click();
             console.log("--- grabbing card 2 by button! ---");
             await sleep(4000);
@@ -1281,11 +1283,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             if (card_1.isEventCard || card_1.isEventItem) {
                 highestCardIdx = getHighestCardIdx(card_2, card_3);
 
-            } else if (card_2.isEventCard || card_1.isEventItem) {
+            } else if (card_2.isEventCard || card_2.isEventItem) {
                 highestCardIdx = getHighestCardIdx(card_1, card_3);
 
-            } else if (card_3.isEventCard || card_1.isEventItem) {
-                highestCardIdx = getHighestCardIdx(card_2, card_3);
+            } else if (card_3.isEventCard || card_3.isEventItem) {
+                highestCardIdx = getHighestCardIdx(card_1, card_2);
 
             }
         }
@@ -1511,7 +1513,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                 lowGenIdx = getLowestGenIdx(card_1, card_3);
 
             } else if (card_3.isEventItem) {
-                lowGenIdx = getLowestGenIdx(card_2, card_3);
+                lowGenIdx = getLowestGenIdx(card_1, card_2);
 
             }
         }
