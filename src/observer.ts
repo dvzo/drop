@@ -1289,6 +1289,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     const setGrabsByWLDuringEventsForAllEventCards = (): void => {
         let highestCardIdx: number = 0; // default highest idx
         let eventCardCount: number = getEventCardCount();
+        let _eventCardExists: boolean = eventCardExists();
         let card_1 = cards[0];
         let card_2 = cards[1];
         let card_3 = cards[2];
@@ -1324,8 +1325,20 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             console.log(`non-event wl: ${cards[highestCardIdx].wl}`);
 
             cards[highestCardIdx].grab = true;
-        }
 
+        // special case for event items, just use free grab for minimum wl card
+        } else if (highestCardIdx >= 0 && !eventCardExists) {
+            console.log("event item min-WL card!");
+            console.log(`non-event element: ${cards[highestCardIdx].element}`);
+            console.log(`non-event gen: ${cards[highestCardIdx].gen}`);
+            console.log(`non-event grab: ${cards[highestCardIdx].grab}`);
+            console.log(`non-event idx: ${cards[highestCardIdx].idx}`);
+            console.log(`non-event name: ${cards[highestCardIdx].name}`);
+            console.log(`non-event series: ${cards[highestCardIdx].series}`);
+            console.log(`non-event wl: ${cards[highestCardIdx].wl}`);
+
+            cards[highestCardIdx].grab = true;
+        }
     }
 
     /**
