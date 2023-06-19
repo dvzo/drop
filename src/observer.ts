@@ -1004,21 +1004,41 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         let sdnButton_1 = sdnDropRowElement?.children[1] ? sdnDropRowElement.children[1] as HTMLElement : null;
         let sdnButton_2 = sdnDropRowElement?.children[2] ? sdnDropRowElement.children[2] as HTMLElement : null;
 
-        // TODO: for future, grab event cards first?
+        // forcing event card drops first
+        // event card + extra drop not working
+        // TODO: use ajax request?
+        if ((cards[0].isEventCard || cards[0].isEventItem) && sdnButton_0) {
+            sdnButton_0.click();
+            console.log("--- grabbing event card/item 0 by button! ---");
+            await sleep(4000);
+        }
 
-        if ((cards[0].grab == true || cards[0].isEventCard || cards[0].isEventItem) && sdnButton_0) {
+        if ((cards[1].isEventCard || cards[1].isEventItem) && sdnButton_1) {
+            sdnButton_1.click();
+            console.log("--- grabbing event card/item 1 by button! ---");
+            await sleep(4000);
+        }
+
+        if ((cards[2].isEventCard || cards[2].isEventItem) && sdnButton_2) {
+            sdnButton_2.click();
+            console.log("--- grabbing event card/item 2 by button! ---");
+            await sleep(4000);
+        }
+
+        // go through card array again after event cards
+        if ((cards[0].grab == true && !cards[0].isEventCard && !cards[0].isEventItem) && sdnButton_0) {
             sdnButton_0.click();
             console.log("--- grabbing card 0 by button! ---");
             await sleep(4000);
         }
 
-        if ((cards[1].grab == true || cards[1].isEventCard || cards[1].isEventItem) && sdnButton_1) {
+        if ((cards[1].grab == true && !cards[1].isEventCard && !cards[1].isEventItem) && sdnButton_1) {
             sdnButton_1.click();
             console.log("--- grabbing card 1 by button! ---");
             await sleep(4000);
         }
 
-        if ((cards[2].grab == true || cards[2].isEventCard || cards[2].isEventItem) && sdnButton_2) {
+        if ((cards[2].grab == true && !cards[2].isEventCard && !cards[2].isEventItem) && sdnButton_2) {
             sdnButton_2.click();
             console.log("--- grabbing card 2 by button! ---");
             await sleep(4000);
