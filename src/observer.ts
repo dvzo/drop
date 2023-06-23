@@ -177,9 +177,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /** globals */
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
-    var priorityElement_1: string = CardElement.Metal.toString(); // prioritize elements if cards do not meet wl minimum
-    var priorityElement_2: string = CardElement.Ice.toString();
-    var priorityElement_3: string = CardElement.Light.toString();
+    var priorityElement_1: string = CardElement.Earth.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_2: string = CardElement.Fire.toString();
+    var priorityElement_3: string = CardElement.Wood.toString();
 
     /**
      * sleep function
@@ -378,8 +378,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     const getEmbedGridSeries = (embedGridSelector: string): HTMLElement | null => {
         let gridSeriesElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedDescription'] > strong`);
 
-        console.log(`### GRID SERIES ELEMENT: ${gridSeriesElement}`);
-
         return gridSeriesElement;
     }
 
@@ -408,7 +406,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
      * for lookup descriptions
      * */
     function getEmbedSingleCharacterWLElement(embedGridSelector: string): HTMLElement | null {
-        let singleCharacterWLElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedDescription'] > code`);
+        let singleCharacterWLElement: HTMLElement | null = document.querySelector(`${embedGridSelector} > div[class*='embedDescription'] > code.inline`);
 
         return singleCharacterWLElement;
     }
@@ -1746,13 +1744,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         embedGridDescriptionElement = getEmbedGridDescriptionElement(embedGridSelector);
                         embedSingleCharacterWLElement = getEmbedSingleCharacterWLElement(embedGridSelector);
 
-                        // TODO: singleCharacterLookupWL
-
-                        console.log(`### EMBEDCONTENT!: ${embedGridSeries}`);
-
                         // check imageContent class for single character lookup
                         // if (embedGridTitle.toLowerCase().trim() === "lookup") {
-                        if (embedGridSeries?.innerHTML.toLowerCase().includes("series:")) {
+
+                        if (embedGridSeries?.innerText.toLowerCase().includes("series:")) {
 
                             console.log("single lookup detected!");
 
