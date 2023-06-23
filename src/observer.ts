@@ -1076,10 +1076,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     function getSingleLookupWL(singleCharacterWLElement: any): number {
         let singleCardWL: string = singleCharacterWLElement.innerText.trim();
 
-        // TODO:
-        console.log(`singleChar WLELEMENT: ${singleCharacterWLElement}`);
-        console.log(`singleCardWL: ${singleCardWL}`);
-
         return parseInt(singleCardWL);
     }
 
@@ -1751,14 +1747,6 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         // check imageContent class for single character lookup
                         // if (embedGridTitle.toLowerCase().trim() === "lookup") {
 
-                        // TODO: 2023-06-22 - not going here
-                        // TODO: testSingle is NaN
-                        let testSingle = getSingleLookupWL(embedSingleCharacterWLElement);
-                        console.log(`### TEST SINGLE LOOKUP: ${testSingle}`);
-                        console.dir(testSingle);
-
-                        // TODO:
-                        // try just series instead?
                         if (embedGridSeries?.innerText.toLowerCase().includes("series:")) {
 
                             console.log("single lookup detected!");
