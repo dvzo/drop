@@ -1100,13 +1100,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
         // keep chopping the description array until empty
         while (allDescriptions.length) {
-            character = allDescriptions.splice(0, 4);
+            character = allDescriptions.splice(0, 8);
 
             console.log("character: " + character);
 
             allCharacters.push(character);
         }
 
+        // TODO: i.e. zelda
+        // would reach the last zelda... since there is no way of telling which name and series it is 
         for (let i = 0; i < allCharacters.length; i++) {
 
             console.log(`current lookup character: ${cards[cardIndex].name}`);
@@ -1117,11 +1119,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // allCharacters will have the longer version of the name, only need to check for cards[cardIndex]
 
             // match current character by name and series, then get wl
-            if (allCharacters[i][2].includes(cards[cardIndex].name)
-                && allCharacters[i][3].includes(cards[cardIndex].series)) {
+            if (allCharacters[i][4].includes(cards[cardIndex].name)
+                && allCharacters[i][6].includes(cards[cardIndex].series)) {
 
                 // get '<3 0' string; grab number
-                wl = allCharacters[i][1].split(' ')[1];
+                wl = allCharacters[i][2].split(' ')[1];
 
                 console.log(`regular search lookup WL: ${wl}`);
             }
