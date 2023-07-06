@@ -177,9 +177,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
     /** globals */
     var cardIndex: number = 0; // global card index to keep track of card array
     var subRequest: boolean = false; // modifier for subsequent grab requests
-    var priorityElement_1: string = CardElement.Wind.toString(); // prioritize elements if cards do not meet wl minimum
-    var priorityElement_2: string = CardElement.Void.toString();
-    var priorityElement_3: string = CardElement.Ice.toString();
+    var priorityElement_1: string = CardElement.Light.toString(); // prioritize elements if cards do not meet wl minimum
+    var priorityElement_2: string = CardElement.Wood.toString();
+    var priorityElement_3: string = CardElement.Metal.toString();
 
     /**
      * sleep function
@@ -1107,7 +1107,7 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             allCharacters.push(character);
         }
 
-        // TODO: i.e. zelda
+        // TODO: i.e. zelda, narmaya - grandblue fantasy
         // would reach the last zelda... since there is no way of telling which name and series it is 
         for (let i = 0; i < allCharacters.length; i++) {
 
@@ -1117,6 +1117,10 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             // i.e. names can be cut off from text drop and character lookup
             // if last character of card image text name or series ends in -, remove it, and do a contains?
             // allCharacters will have the longer version of the name, only need to check for cards[cardIndex]
+
+            // scl continues with ...
+            // The Legend of Zelda: Breath ...
+            // The Legend Of Zelda: Twiligh...
 
             // match current character by name and series, then get wl
             if (allCharacters[i][4].includes(cards[cardIndex].name)
