@@ -3,6 +3,21 @@ import { Session } from './session';
 import { Timer } from './timer';
 import { SuperProperties } from './superProperties';
 
+// TODO:
+// - move globals?
+
+// global boolean to send back to node context whether to continue looping drops
+var stopLoop: boolean = false;
+
+/**
+ * set when the "dns" command is sent
+ * @returns stopLoop to send back to node context
+ */
+export var getStop = (): boolean => {
+
+    return stopLoop;
+}
+
 /**
  * 
  * @returns userAgent as a string that can be returned back to the node context
@@ -1569,6 +1584,27 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         }
     }
 
+    /**
+     * send a plain message to discord
+     * @param content string to send as a message
+     */
+    const sendMsg = async (content: string): Promise<void> => {
+        let sendMsgBody = getMsgBody(content); // create body for content
+        superProperties.browser_user_agent = _getUserAgent();
+        superProperties.browser_version = _getChromeVersion();
+        session._header["x-super-properties"] = _generateSuperProperties(superProperties);
+
+        await fetch(session._msgUrl, {
+            "headers": session._header,
+            "referrer": session._referUrl,
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "body": sendMsgBody,
+            "method": "POST",
+            "mode": "cors",
+            "credentials": "include"
+        });
+    }
+
     // selector for all messages
     var msgSelector = "ol[class*='scroll']";
 
@@ -1592,15 +1628,15 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
             if (mutation.addedNodes.length > 0) {
 
                 // every message sent will be an 'LI' tag
-                let dataCustomId;
+                let dataCustomId: string | null;
                 let chatMsgId = mutation.addedNodes[0].id; // <li id="chat-messages-[channelId]-[msgAccessoriesId]">
                 let msgAccessoriesId = getIdAtIndex(chatMsgId, 3);
                 let dataCustomIdSelector = `#${chatMsgId} > div > div > div > div`;
                 let dataCustomIdElement = document.querySelector(dataCustomIdSelector); // "#message-content-[id]"
 
                 // message content and author
-                let authorName;
-                let msgContent;
+                let authorName: string | null;
+                let msgContent: string | null;
                 let contentSelector = `#${chatMsgId} > div > div[class*='contents']`;
                 let authorElement = document.querySelector(`${contentSelector} > h3 > span > span`);
                 let msgContentElement = document.querySelector(`${contentSelector} > div`); // should always be available
@@ -1675,8 +1711,17 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                                     .then(() => setGrabs())
                                     .then(() => printCards())
                                     .then(() => grabCardsByButtons(sdnDropRow))
-                                    .then(() => resetGlobals());
-                                    // setGrabs();
+                                    .then(() => resetGlobals())
+                                    .then(() => {
+
+                                        // chain drops
+                                        console.log("-- waiting for next drop...");
+
+                                        setTimeout(() => {
+                                            console.log("-- 8 minutes passed, sending next drop!");
+                                            sendMsg("sdn");
+                                        }, 488000);
+                                    });
 
                                     // TODO: original
                                     // grabCards(msgAccessoriesId, dataCustomId);
@@ -1783,9 +1828,11 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                         }
 
                     }
-
+                } else if (authorName === "zootrash" && msgContent?.includes("dns")) {
+                    // stop loop and close program
+                    console.log("-- requesting stop in 5 minutes!");
+                    stopLoop = true;
                 }
-
 
             }
         }
