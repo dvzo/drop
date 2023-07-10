@@ -5,7 +5,7 @@ import { loadScreen, debugMessage, optionSelect, channelSelect, getLaunchOptions
 import { Session } from './session';
 import { Timer } from './timer';
 import { DEBUG, OS_LIST, U_LIST, G_LIST, APP_ID, REQUEST_URL, getReferUrl, SEND_INTERVAL, getMsgUrl, getHeader, LEADER_TIMEOUT, FOLLOWER_TIMEOUT, DELAY, PICK_INTERVAL, PICK_CD, CMD_CD, WL_THRESH, WL_MIN, TIMEOUT_MULT, LOW_GEN } from './declare/constants';
-import { getUserAgent, getChromeVersion, injectMutator } from './observer';
+import { getStop, getUserAgent, getChromeVersion, injectMutator } from './observer';
 import { sendMsg } from './message';
 import { splash, login, tfa, dashboard, grandLine } from './sail';
 import { msgSelector } from './declare/selectors';
@@ -93,18 +93,19 @@ import { SuperProperties } from './superProperties';
     // sending initial message
     if (!DEBUG) {
         await sendMsg(session, "sdn");
-        let treasure = 0;
-
-        var interval = setInterval(async() => {
-            // update super properties for the session object, before every request
-            superProperties.browser_user_agent = await page.evaluate(getUserAgent);
-            superProperties.browser_version = await page.evaluate(getChromeVersion);
-            session.header = getHeader(session.user, superProperties);
-
-            sendMsg(session, "sdn").then(() => echo(`grabbing treasure #${treasure}`));
-            treasure++;
-        }, SEND_INTERVAL);
     }
 
-    // await browser.close();
+    // check every 3 minutes whether or not "dns" was called from the embedded browser
+    var interval = setInterval(async() => {
+        let stopLoop = await page.evaluate(getStop);
+
+        if (stopLoop) {
+            await browser.close();
+            clearInterval(interval);
+            echo("the sail has ended! the end :)");
+
+        } else {
+            echo(`sailing the seas...`);
+        }
+    }, 180000);
 })();
