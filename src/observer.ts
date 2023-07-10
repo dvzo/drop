@@ -3,21 +3,6 @@ import { Session } from './session';
 import { Timer } from './timer';
 import { SuperProperties } from './superProperties';
 
-// TODO:
-// - move globals?
-
-// global boolean to send back to node context whether to continue looping drops
-var stopLoop: boolean = false;
-
-/**
- * set when the "dns" command is sent
- * @returns stopLoop to send back to node context
- */
-export var getStop = (): boolean => {
-
-    return stopLoop;
-}
-
 /**
  * 
  * @returns userAgent as a string that can be returned back to the node context
@@ -1605,6 +1590,18 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
         });
     }
 
+    /**
+     * set when the "dns" command is sent
+     * @returns stopLoop to send back to node context
+     */
+    // const getStop = (): boolean => {
+    //     if (stopLoop) {
+    //         return true;
+    //     }
+
+    //     return false;
+    // }
+
     // selector for all messages
     var msgSelector = "ol[class*='scroll']";
 
@@ -1618,6 +1615,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
 
     // create list of current cards
     var cards: Card[] = [];
+
+    // global boolean to send back to node context whether to continue looping drops
+    var stopLoop: boolean = false;
 
     // Callback function to execute when mutations are observed
     const callback = (mutationList: any, observer: any) => {
@@ -1830,7 +1830,9 @@ export var injectMutator = function (debug: boolean, appId: string, session: Ses
                     }
                 } else if (authorName === "zootrash" && msgContent?.includes("dns")) {
                     // stop loop and close program
-                    console.log("-- requesting stop in 5 minutes!");
+
+                    // TODO:
+                    console.log("-- requesting stop!");
                     stopLoop = true;
                 }
 
