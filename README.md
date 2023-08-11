@@ -1,6 +1,9 @@
 # drop :)
 
 ## installation
+
+run npm install inside of same directory as package.json
+
 ```
 npm install
 ```
