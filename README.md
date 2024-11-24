@@ -1,4 +1,6 @@
-# drop :)
+# drop
+
+a node.js command line tool that webscrapes discord to communicate with discord bots
 
 ## installation
 
